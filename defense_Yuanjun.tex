@@ -1,0 +1,133 @@
+\documentclass[16pt,presentation]{beamer}
+%\mode<presentation>{\usetheme{default}}
+%\setbeamersize{text margin left=0.5cm} 
+%\setbeamersize{text margin right=0.5cm} 
+
+\usepackage{color}
+\usepackage{rotating}
+\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{helvet}
+\usepackage[T1]{fontenc}
+\usepackage{units}
+\usepackage{bm}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{rotating}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usetikzlibrary{fit,positioning}
+
+
+
+\input{texdefs.tex}
+
+
+\usetheme{Warsaw}
+
+\setbeamerfont{footline}{size=\fontsize{6}{10}\selectfont}
+
+%%%% title etc.
+\author[Yuanjun Gao]{Yuanjun Gao}
+\institute{\small Department of Statistics\\ Columbia University}
+\title[Department of Statistics, Columbia University]{\large Statistical Machine Learning Methods for High-dimensional Neural Population Data Analysis}
+\date{}
+
+\begin{document}
+
+\beamertemplatetransparentcovereddynamicmedium
+
+\begin{frame}\vspace*{1.5cm}
+\maketitle
+\begin{center}
+\vspace{-1cm}
+%Joint work with Buesing L, Shenoy KV, Cunningham JP 
+%\hspace*{1.25cm}\includegraphics[width=0.44\linewidth]{./figures/CoverSlide/officialblack2.jpg} \hspace*{1cm}
+\end{center}
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%% Overview %%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Overview}
+TODO: add a diagram for statistical criticizing
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Overview}
+\tableofcontents
+\end{frame}
+
+
+
+\AtBeginSection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[
+    currentsection
+]
+  \end{frame}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%% latent variable model for neural population data %%%%%%%%
+\section[]{Neural Population Data Analysis with Latent Variable Models}
+
+\begin{frame}
+\frametitle{Introduction: state space models}
+\begin{figure}
+\centering
+{\small
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 6mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100]
+  \node[main, fill = white!100] (z1) [] { $\vz_{t-1}$};
+  \node[main] (z2) [right=of z1] {$\vz_{t}$ };
+  \node[main] (z3) [right=of z2] {$\vz_{t+1}$};
+  \node[main, fill = black!10] (x1) [above=of z1] { $\vx_{t-1}$};
+  \node[main, fill = black!10] (x2) [above=of z2] {$\vx_{t}$ };
+  \node[main, fill = black!10] (x3) [above=of z3] {$\vx_{t+1}$};
+  \node (z0) [left=of z1] {$\cdots$};
+  \node (zT) [right=of z3] {$\cdots$};
+  \path (z1) edge [connect] (z2)
+        (z2) edge [connect] (z3)
+        (z1) edge [connect] (x1)
+        (z2) edge [connect] (x2)
+        (z3) edge [connect] (x3)
+        (z0) edge [connect] (z1)
+        (z3) edge [connect] (zT);
+\end{tikzpicture}
+}
+\end{figure}
+\begin{itemize}
+\item $\vx_t$: observed spike counts;~~ $\vz_t$: latent variables
+%\item $p(\vx, \vz) = p(\vz_1) \prod_{t=1}^{T-1}p(\vz_{t+1} | \vz_t) \prod_{t=1}^T p(\vx_t | \vz_t)$
+\item Joint distribution
+\[\log p(\vx, \vz) = \log p(\vz_1) + \sum_{t=1}^{T-1}\log p(\vz_{t+1} | \vz_t) + \sum_{t=1}^T \log p(\vx_t | \vz_t)\]
+\item Dynamical view of motor data
+\end{itemize}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%% ROI detection %%%%%%%%%%%%%%%%%%%%%%%%%
+\section[]{Region of Interest Detection for Calcium Imaging Data}
+
+\begin{frame}
+\frametitle{Introduction: calcium imaging data}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%% MEFN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section[]{Maximum Entropy Flow Networks}
+
+\begin{frame}
+\frametitle{Introduction: maximum entropy principle}
+\end{frame}
+
+\end{document}
+
+

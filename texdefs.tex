@@ -1,0 +1,203 @@
+% Standard environments here
+\usepackage{mathtools} % pmatrix*! use \begin{matrix*}[r] to center colums right
+
+
+% ----  Custom Environments ----- 
+% just a horizontal rule for the "details" environment
+\newcommand{\optionrule}{\noindent\rule{1.0\textwidth}{0.75pt}}
+% the "details" environment declaration.
+\newenvironment{aside}{%
+  \def\FrameCommand{\hspace{2em}}
+  \MakeFramed {\advance\hsize-\width \small}\optionrule}
+{\\\optionrule\endMakeFramed}
+% I took out the newline command. i don't know what it did.
+%{\newline\optionrule\endMakeFramed}
+
+% ---- Text/Formatting Symbols ---
+\renewcommand{\eqref}[1]{Equation (\ref{#1})}
+\newcommand{\figref}[1]{Figure \ref{#1}}
+%\renewcommand{\etal}{{\it et al} }
+
+% ---- Math symbols ------------
+
+% basic algebra, set-theoretic, and functional notation
+\newcommand{\set}[1]{\{#1\}} % set notation
+\newcommand{\Range}{\mathcal{R}} % range (ie, of a function)
+\newcommand{\setcomp}[1]{{#1}^{\mathsf{c}}} % set complement
+%\newcommand{\inv}{^{-1}} % inverse
+\newcommand{\inv}[1]{\ensuremath{{#1}^{-1}}} 
+\newcommand{\ind}[1]{\mathbf{1}_{\left\{ #1\right\}}} % indicator function
+\newcommand{\sgn}{\operatorname{sgn}}
+
+\newcommand{\st}{\mbox{ s.t. }} % such that or subject to
+
+% number sets
+% \newcommand{\N}{\mathbb N}
+% \newcommand{\Z}{\mathbb Z}
+% \newcommand{\Q}{\mathbb Q}
+% \newcommand{\R}{\mathbb R}
+% \newcommand{\C}{\mathbb C}
+
+%\DeclareMathOperator*{\argmax}{argmax}
+%\DeclareMathOperator*{\argmin}{argmin}
+\DeclareMathOperator*{\supp}{supp}
+\DeclareMathOperator*{\tr}{tr}
+
+% Calculus: Derivatives \& Integrals
+\newcommand{\dm}[1]{\ensuremath{\,\mathrm{d}{#1}}} % Pretty symbol for differentials - ie, dx
+\newcommand{\deriv}[2]{\frac{d #1}{d #2}}
+\newcommand{\D}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\DD}[2]{\frac{\partial ^2 #1}{\partial #2 ^2}}
+\newcommand{\Di}[2]{\frac{\partial ^i #1}{\partial #2 ^i}}
+\newcommand{\evalat}[1]{\left.#1\right|}
+\newcommand{\parderiv}[2]{\frac{\partial #1}{\partial{#2}}}
+\newcommand{\parDeriv}[3]{\frac{\partial^{#3} #1}{\partial{#2}^{#3}}}
+\newcommand{\parwrt}[1]{\frac{\partial}{\partial{#1}}}
+\newcommand{\parpowrt}[2]{\frac{\partial^{#1}}{\partial {#2}^{#1}}}
+\newcommand{\partwowrt}[2]{\frac{\partial^{2}}{\partial {#2} \partial{#1}}}
+
+% basic linear algebra notation
+\newcommand{\ones}{\mathop{\mathbf{1}}} % vector of ones
+\newcommand{\diag}{\mathop{\mbox{diag}}}
+\newcommand{\rank}{\mathop{\mathrm{rank}}} % null space ( range is \Range, above)
+\newcommand{\Null}{\mathcal N} % null space ( range is \Range, above)
+\newcommand{\Tr}{\textrm{Tr}} % trace
+\newcommand{\norm}[1]{\left|\left|#1\right|\right|}  % normroduct
+\newcommand{\tp}[1]{\ensuremath{{#1}^\top}} % transpose with argument
+\newcommand{\trp}{^{\mathrm{T}}} % Transpose
+\newcommand{\itrp}{^{-\mathrm{T}}} % inverse-transpose
+\newcommand{\inprod}[2]{\langle #1,#2\rangle}
+
+% Probability notation
+\newcommand{\pialg}{\pi\text{-algebra}}
+\newcommand{\sigalg}{\sigma\text{-algebra}}
+\newcommand{\alg}[1]{\mathcal{#1}} % sigma algebra notation
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\V}{\mathbb{V}}
+\newcommand{\Prob}[1]{\mathbb{P}\left[#1\right]}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newcommand{\Norm}[2]{\mathcal{N}\left(#1, #2\right)} % normal distribution
+%\newcommand{\mvn}[4]{\frac{1}{(2\pi)^{\frac{#4}{2}} |#3|^\frac{1}{2}} 
+%\exp \left[-\tfrac{1}{2} (#1 - #2)\trp #3^{-1}(#1-#2)\right]} % multivariate normal
+%% Notation for specific projects
+%\newcommand{\mvnzero}[2]{\frac{1}{|2\pi #2|^\frac{1}{2}}
+%\exp \left[-\tfrac{1}{2} #1\trp #2^{-1}#1\right]}  % zero-mean mvn
+
+%Yuanjun's stuff
+\newcommand{\N}{\mathcal{N}}
+
+% matrix variables
+\newcommand{\identityMat}{\ensuremath{I}}
+
+\usepackage{forloop}
+\newcommand{\defvec}[1]{\expandafter\newcommand\csname v#1\endcsname{{\mathbf{#1}}}}
+\newcounter{ct}
+\forLoop{1}{26}{ct}{
+    \edef\letter{\alph{ct}}
+    \expandafter\defvec\letter
+}
+\newcommand{\defmat}[1]{\expandafter\newcommand\csname m#1\endcsname{{\mathbf{#1}}}}
+\forLoop{1}{26}{ct}{
+    \edef\letter{\Alph{ct}}
+    \expandafter\defmat\letter
+}
+\newcommand{\vmu}{\bm{\mu}}
+\newcommand{\veta}{\bm{\eta}}
+\newcommand{\vepsilon}{\bm{\epsilon}}
+\newcommand{\vlambda}{\bm{\lambda}}
+
+
+\newcommand{\mLambda}{\bm{\Lambda}}
+
+% mutual information symbols (for MI estimation)
+
+% convex analysis symbols (for optimization class)
+\newcommand{\conv}{\text{conv}} % convex hull
+\newcommand{\aff}{\text{Aff }} % affine hull
+\newcommand{\extp}{\text{Ext}} %extreme points
+%\newcommand{\argmin}{\mathrm{arg}\min}
+\newcommand{\argmin}[1]{\underset{#1}{\operatorname{argmin}}}
+\newcommand{\argmax}[1]{\underset{#1}{\operatorname{argmax}}}
+\newcommand{\grad}{\nabla}
+\newcommand{\curl}{\nabla\times}
+\newcommand{\logdet}[1]{\log |#1|}
+
+
+%% My own TheoremStyle
+  \newtheoremstyle{evandefinition}{\topsep}{\topsep}%
+     {}%         Body font  (\itshape)
+     {}%         Indent amount (empty = no indent, \parindent = para indent)
+     {\bfseries}% Thm head font
+     {}%        Punctuation after thm head
+     {\newline}%  Space after thm head  (default: 5pt plus 1pt minus 1pt)
+     {\thmname{#1}\thmnumber{ #2}. \textit{\thmnote{ #3} }}%         Thm head spec
+
+
+     \newtheoremstyle{indenteddefinition}{\topsep}{\topsep}
+     {\addtolength{\leftskip}{2em}} %         Body font  (\itshape)
+     {-1.75em}%         Indent amount (empty = no indent, \parindent = para indent)
+     {\bfseries}% Thm head font % also: \scshape
+     {}%        Punctuation after thm head
+     { }%  Space after thm head  (default: 5pt plus 1pt minus 1pt)
+     {\thmname{#1} \thmnumber{#2}. \textbf{(\thmnote{#3})}}%         Thm head spec
+     % {} %         Thm head spec
+
+
+% %% This code will allow me to have a bar around shit (uses ntheorem)
+% %\theoremstyle{plain}
+% \theorembodyfont{}
+% \usepackage{color}
+% \definecolor{gray}{rgb}{0.7,0.7,0.7}
+% % This code turns the box around the theorem into a bar to the left
+% \renewcommand*\FrameCommand{{\color{gray}\vrule width 1pt\hspace{10pt}}}
+
+
+% general headings
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{proposition}{Proposition}
+%\newtheorem{corollary}{Corollary}
+
+%\theoremstyle{evandefinition}
+%\newtheorem{definition}{Definition}
+%\theoremstyle{definition}
+% \theoremindent1em
+% \theorembodyfont{\normalfont}
+%\newframedtheorem{definition}{Definition}
+
+%\theoremstyle{indenteddefinition} 
+%\newtheorem{example}{Example}
+
+\theoremstyle{remark} 
+\newtheorem{exercise}{Exercise}
+\newtheorem{remark}{Remark}
+
+%% Make it so matrix has an align-column option ([c])
+\makeatletter
+\renewcommand*\env@matrix[1][c]{\hskip -\arraycolsep
+  \let\@ifnextchar\new@ifnextchar
+  \array{*\c@MaxMatrixCols #1}}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Examples of things I might want to do.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+%%%%%%%%%%%%%%%%
+%  Function with different cases:
+%%%%%%%%%%%%%%%%
+% \begin{align*}
+%   q(\mu) &= \inf_x L(x,\mu)
+% \\
+% &=\left\{
+% \begin{matrix}
+% &c_0 + \mu c_1 - (b_0 - \mu b_1)^T ( A_0 + \mu A_1)^+ (b_0 + \mu
+% b_1 )^T  &  A_0 + \mu A_1 \succeq 0,
+% \\
+% &\quad & b_0 + \mu b_1 \in \mathcal{R}(A_0 + \mu A_1)
+% \\
+% & \infty & \mathrm{otherwise}
+% \end{matrix}\right.
+% \end{align*}
+% 
