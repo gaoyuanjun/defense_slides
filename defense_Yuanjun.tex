@@ -21,13 +21,17 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 \usetikzlibrary{fit,positioning}
-
-
+\usepackage[backend=bibtex,style=authoryear]{biblatex}
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+\addbibresource{refs.bib}
 
 \input{texdefs.tex}
 
 
-\usetheme{Warsaw}
+%\usetheme{Warsaw}
+\usetheme{metropolis}
 
 \setbeamerfont{footline}{size=\fontsize{6}{10}\selectfont}
 
@@ -40,6 +44,8 @@
 \begin{document}
 
 \beamertemplatetransparentcovereddynamicmedium
+\setbeamertemplate{section in toc}[ball unnumbered]
+\setbeamertemplate{subsection in toc}[ball unnumbered]
 
 \begin{frame}\vspace*{1.5cm}
 \maketitle
@@ -55,14 +61,15 @@
 \begin{frame}
 \frametitle{Overview}
 TODO: add a diagram for statistical criticizing
+
+TODO: add a page for spike train
 \end{frame}
 
 
 \begin{frame}
-\frametitle{Overview}
+\frametitle{Table of Contents}
 \tableofcontents
 \end{frame}
-
 
 
 \AtBeginSection[]
@@ -70,7 +77,17 @@ TODO: add a diagram for statistical criticizing
   \begin{frame}
     \frametitle{Table of Contents}
     \tableofcontents[
-    currentsection
+    currentsection, currentsubsection
+]
+  \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}
+    \frametitle{Table of Contents}
+    \tableofcontents[
+    currentsection, currentsubsection
 ]
   \end{frame}
 }
@@ -79,12 +96,12 @@ TODO: add a diagram for statistical criticizing
 \section[]{Neural Population Data Analysis with Latent Variable Models}
 
 \begin{frame}
-\frametitle{Introduction: state space models}
+\frametitle{State space models}
 \begin{figure}
 \centering
 {\small
 \begin{tikzpicture}
-\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 6mm]
+\tikzstyle{main}=[circle, minimum size = 11mm, thick, draw =black!80, node distance = 6mm]
 \tikzstyle{connect}=[-latex, thick]
 \tikzstyle{box}=[rectangle, draw=black!100]
   \node[main, fill = white!100] (z1) [] { $\vz_{t-1}$};
@@ -106,12 +123,206 @@ TODO: add a diagram for statistical criticizing
 }
 \end{figure}
 \begin{itemize}
-\item $\vx_t$: observed spike counts;~~ $\vz_t$: latent variables
+\item $\vx_t \in \mathbb{N}^n$: spike counts; $\vz_t \in \mathbb{R}^m$: latent variables
 %\item $p(\vx, \vz) = p(\vz_1) \prod_{t=1}^{T-1}p(\vz_{t+1} | \vz_t) \prod_{t=1}^T p(\vx_t | \vz_t)$
+%\item Joint distribution
+%\[\log p(\vx, \vz) = \underbrace{\log p(\vz_1)}_{\text{Initial distribution}} + 
+%\underbrace{\sum_{t=1}^{T-1}\log p(\vz_{t+1} | \vz_t)}_{\text{Transition model}} + 
+%\underbrace{\sum_{t=1}^T \log p(\vx_t | \vz_t)}_{\text{Observation model}}\]
 \item Joint distribution
-\[\log p(\vx, \vz) = \log p(\vz_1) + \sum_{t=1}^{T-1}\log p(\vz_{t+1} | \vz_t) + \sum_{t=1}^T \log p(\vx_t | \vz_t)\]
-\item Dynamical view of motor data
+\[p(\vx, \vz) = \underbrace{p(\vz_1)}_{\text{Initial distribution}} 
+\underbrace{\prod_{t=1}^{T-1}p(\vz_{t+1} | \vz_t)}_{\text{Transition model}} 
+\underbrace{\prod_{t=1}^T p(\vx_t | \vz_t)}_{\text{Observation model}}\]
+\item Common input; Dynamical view of motor data (TODO: elaborate this line)
 \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{State space models: multiple trials}
+\begin{figure}
+\centering
+{\footnotesize
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 11mm, text width = 8mm, align=center, thick, draw =black!80, node distance = 6mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100]
+  \node[main, fill = white!100] (z1) [] { $\vz_{r(t-1)}$};
+  \node[main] (z2) [right=of z1] {$\vz_{rt}$ };
+  \node[main] (z3) [right=of z2] {$\vz_{r(t+1)}$};
+  \node[main, fill = black!10] (x1) [above=of z1] { $\vx_{r(t-1)}$};
+  \node[main, fill = black!10] (x2) [above=of z2] {$\vx_{rt}$ };
+  \node[main, fill = black!10] (x3) [above=of z3] {$\vx_{r(t+1)}$};
+  \node (z0) [left=of z1] {$\cdots$};
+  \node (zT) [right=of z3] {$\cdots$};
+  \path (z1) edge [connect] (z2)
+        (z2) edge [connect] (z3)
+        (z1) edge [connect] (x1)
+        (z2) edge [connect] (x2)
+        (z3) edge [connect] (x3)
+        (z0) edge [connect] (z1)
+        (z3) edge [connect] (zT);
+\end{tikzpicture}
+}
+\end{figure}
+\begin{itemize}
+\item $r=1,...,R$: trial number
+\item $\vx_{rt} \in \mathbb{N}^n$: spike counts; $\vz_{rt} \in \mathbb{R}^m$: latent variables
+%\item $p(\vx, \vz) = p(\vz_1) \prod_{t=1}^{T-1}p(\vz_{t+1} | \vz_t) \prod_{t=1}^T p(\vx_t | \vz_t)$
+%\item Joint distribution
+%\[\log p(\vx, \vz) = \underbrace{\log p(\vz_1)}_{\text{Initial distribution}} + 
+%\underbrace{\sum_{t=1}^{T-1}\log p(\vz_{t+1} | \vz_t)}_{\text{Transition model}} + 
+%\underbrace{\sum_{t=1}^T \log p(\vx_t | \vz_t)}_{\text{Observation model}}\]
+\item Joint distribution
+\[p(\vx, \vz) = \prod_{r=1}^R \left[ \underbrace{p(\vz_{r1})}_{\text{Initial distribution}} 
+\underbrace{\prod_{t=1}^{T-1}p(\vz_{r(t+1)} | \vz_{rt})}_{\text{Transition model}} 
+\underbrace{\prod_{t=1}^T p(\vx_{rt} | \vz_{rt})}_{\text{Observation model}} \right]\]
+%\item Common input; Dynamical view of motor data (TODO: elaborate this line)
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Common parameterization and our extensions}
+\begin{itemize}
+\item Common assumptions for latent dynamics: linear Gaussian dynamical system (LDS)
+ \[\begin{split}
+ \vz_{1} &\sim \N(\mu_1, Q_1)\\
+ \vz_{t+1} | \vz_{t} &\sim \N(A \vz_{t}, Q)
+  \end{split}\]
+\item Common observation models:
+ \[\vx_t | \vz_t \sim \underbrace{\underbrace{\N(C \vz_t + d, \Sigma)}_{\text{model mismatch}}
+ \text{ or }
+ \underbrace{\text{Poisson}\left(\exp(C \vz_t + d)\right)}_{\text{equal dispersion}}}_\text{stringent assumptions}\]
+\item Our extensions for observation model:
+\begin{itemize}
+\item Generalized count distribution (GCLDS) \parencite{Gao2015}
+\item Flexible nonlinear observation (fLDS) \parencite{gao2016linear}
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection[]{Generalized count linear dynamical system}
+\begin{frame}
+\frametitle{Motivation}
+\begin{itemize}
+\item Doubly stochastic Poisson model implies \alert{overdispersion}
+%\[ \vx \sim \text{Poisson}(f(\vz))  , \vz \sim p(\vz) \rightarrow \text{var}(\vx) \geq E(\vx)\]
+\[\left. \begin{array}{ll} \vz &\sim p(\vz) \\ \vx &\sim \text{Poisson}(f(\vz)) \end{array} \right\} \Rightarrow \alert{\text{var}(\vx) \geq E(\vx)}\]
+\item Need a more flexible distribution to separate \alert{firing rate variability} with \alert{noise variability}.
+\[\text{var}(\vx) = \underbrace{\text{var}\left(E(\vx | \vz)\right)}_\text{firing rate variability} + \underbrace{E\left(\text{var}(\vx | \vz)\right)}_\text{noise variability}\]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Generalized count distribution family}
+\begin{itemize}
+\item Generalized count (GC) distribution family
+\[\begin{split}
+p_{\text{Poisson}}(x; \lambda) \propto& \frac{\exp\left\{\log{\lambda} \cdot x\right\}}{x!},~~~x \in \mathbb{N}\\
+\Downarrow&\\
+p_{\mathcal{GC}}(x; \theta, g(\cdot)) \propto& \frac{\exp(\theta \cdot x + g(x) )}{x!}, ~~~x \in \mathbb{N}
+\end{split}\]
+where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
+\item Parameterizes \alert{all} the count distributions \alert{redundantly}.
+\item Given $g(\cdot)$, $\theta$ controls the expectation.
+\item $g(\cdot)$ controls the ``shape'' of the distribution. Convex/concave $g(\cdot)$ implies over/under-dispersion.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Model formulation}
+ \begin{itemize}
+ \item Linear dynamical systems with generalized count observation 
+ \[\begin{split}
+ \vz_{r1} &\sim \N(\mu_1, Q_1)\\
+ \vz_{r(t+1)} | \vz_{rt} &\sim \N(A \vz_{rt}, Q)\\
+ x_{rti} & \sim \mathcal{GC}(c_i^T \vz_{rt}, g_i(\cdot)), i = 1,...,n
+ \end{split}\]
+ \item Practical considerations
+ \begin{itemize}
+ %\item Set $g_i(0) = 0$ without loss of generality;
+ \item Set $g_i(k) = -\infty$ for $k > K$ to facilitate computation;
+ \item Ridge penalty on the $2^{\text{nd}}$ difference of $g_i(\cdot)$ to avoid overfitting;
+ \item Set $g_i(0) = 0$ without loss of generality.
+ \end{itemize}
+ \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Variational Bayes Expectation Maximization (VBEM)}
+\begin{itemize}
+\item $\vx$: data, $\vz$: latent variables, $\theta$: model parameters, 
+\item Often hard to compute $p_\theta(\vx) = \int p_\theta(\vx, \vz) d \vz$ and $p_\theta(\vz | \vx)$.
+\item Approximate the posterior by a \alert{tractable} distribution family.
+\[p_{\theta}(\vz | \vx) \approx q(\vz) \in \mathcal{Q}\]
+\item Optimize a \alert{lower bound of log likelihood}, or ELBO %w.r.t. both the model parameters and the variational distribution.
+\[\begin{split}
+&\text{ELBO}(\theta, q) = \int \left[\log p_{\theta}(\vx, \vz) - \log q(\vz)\right] q(\vz) d\vz \\
+&= \log p_{\theta}(\vx) - \text{KL}(q(\vz) || p_\theta(\vz | \vx)) \leq \log p_{\theta}(\vx) % \log p_\theta(\vx) =& \log \int p_{\theta}(\vx, \vz) d \vz\\ 
+\end{split}\]
+%\[\begin{split}
+%\log p_\theta(\vx) =& \log \int p_{\theta}(\vx, \vz) d \vz\\
+%\geq& \int \left[\log p_{\theta}(\vx, \vz) - \log q(\vz)\right] q(\vz) d\vz
+%\end{split}\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Variational Bayes Expectation Maximization (VBEM)}
+\begin{itemize}
+\item VBEM: Optimize $\text{ELBO}(\theta, q) \leq \log p_\theta(\vx)$ iteratively %by \alert{coordinate ascent}
+\begin{itemize}
+\item E-step: For a fixed $\theta$, optimize $q$ (such that $q(\vz) \approx p_{\theta}(\vz | \vx)$)
+\item M-step: For a fixed $q$, optimize $\theta$
+\item Iterate between E-step and M-step until convergence %, each iteration gives a higher ELBO and hopefully a higher log likelihood
+\end{itemize}
+\item VBEM for GCLDS 
+\begin{itemize}
+\item We set $q$ to be multivariate Gaussian
+\item We derive a looser but tractable ELBO%The vanilla ELBO is still intractable, we use Jensen's inequality to get a tractable but looser bound. %(looser bound $\Rightarrow$ worse performance?)
+%\item Fast initialization by Laplace approximation in .
+\item E-step: fast Laplace approximation initialization + dual optimization
+\item M-step: convex optimization + analytical solution
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+TODO: add George reaching period figure
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Result}
+\begin{itemize}
+\item For both simulated and real dataset, we compare GCLDS with PLDS (Poisson observation model)
+%\XSolid \Checkmark 
+%\item On both simulated and real data
+%GCLDS captures both mean and variance of the data well, PLDS capture 
+\begin{center}
+\begin{tabular}{ cccc } 
+ \hline
+  & Mean & Variance & Likelihood \\
+ \hline
+ PLDS & \cmark & \alert{\xmark}& \alert{\xmark} \\ 
+ GCLDS &\cmark &\cmark &\cmark \\ 
+ \hline
+\end{tabular}
+\end{center}
+
+\end{itemize}
+\end{frame}
+
+
+\subsection[]{Linear dynamical neural population models through nonlinear embeddings}
+
+\begin{frame}
+\frametitle{motivation}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%% ROI detection %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -126,6 +337,14 @@ TODO: add a diagram for statistical criticizing
 
 \begin{frame}
 \frametitle{Introduction: maximum entropy principle}
+\end{frame}
+
+\begin{frame}
+\frametitle{Conclusion}
+\end{frame}
+
+\begin{frame}
+\frametitle{Acknowledgement}
 \end{frame}
 
 \end{document}
