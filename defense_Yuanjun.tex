@@ -325,6 +325,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{itemize}
 \item Center-out reaching experiments
 \item Multi-electrode array recording
+\item Strong \alert{under-dispersion}
 \end{itemize}
 \end{frame}
 
@@ -366,19 +367,22 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{frame}
 \frametitle{Real data analysis: population fit}
 %\begin{centering}
-\begin{tabular}[t]{ccc}
-\includegraphics[scale=0.43,clip = true]{figs/gclds/fig_MSE_band_George_Move_NULL.pdf}&
-\includegraphics[scale=0.43,clip = true]{figs/gclds/fig_likelihood_band_George_Move_NULL.pdf}&
-\includegraphics[scale=0.43,clip = true]{figs/gclds/fig_var_JOB962346_seq14_xDim8_plot.pdf}
-\end{tabular}
 \begin{itemize}
 \item Leave-one-neuron-out prediction
-\begin{itemize}
-\item Separate trials into training and testing
-\item Use training data to learn parameters
-\item For test data, drop one neuron and use other neurons to predict its firing rate
+%\begin{itemize}
+%\item Separate trials into training and testing
+%\item Use training data to learn parameters
+%\item For test data, drop one neuron and use other neurons to predict its firing rate
+%\end{itemize}
 \end{itemize}
-\end{itemize}
+\begin{center}
+\begin{tabular}[t]{cc}
+\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_MSE_band_George_Move_NULL.pdf}&
+\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_likelihood_band_George_Move_NULL.pdf}%&
+%\includegraphics[scale=0.43,clip = true]{figs/gclds/fig_var_JOB962346_seq14_xDim8_plot.pdf}
+\end{tabular}
+\end{center}
+
 %\end{centering}
 \end{frame}
 
@@ -409,11 +413,139 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 
 \begin{frame}
 \frametitle{Motivation}
+\begin{tabular}{cl}
+\parbox{0.6\textwidth}{
 \begin{itemize}
-\item Neural activities lie in a low-dimensional \alert{manifold} rather than a \alert{linear subspace}
-\item TODO: put V1 data?
+\item Neural activities lie in a low-dimensional \alert{nonlinear manifold} rather than a \alert{linear subspace}
+\item Flexible observation model makes the state space model more expressive
+\end{itemize}
+}
+&
+\hspace{-1cm}
+\begin{tabular}{c}
+\includegraphics[scale=0.5,clip = true]{figs/flds/fig_V1_single_3concat_onlyobservation.pdf}
+\end{tabular}
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Model formulation: fLDS}
+\begin{itemize}
+ \item Linear dynamical systems with nonlinear link and count observation
+ \[\begin{split}
+ \vz_{r1} \sim& \N(\mu_1, Q_1)\\
+ \vz_{r(t+1)} | \vz_{rt} \sim& \N(A \vz_{rt}, Q)\\
+ x_{rti} \sim& \text{Poisson}(f_i(\vz_{rt})) \text{ (PfLDS) } \\
+ &\text{   or }\mathcal{GC}(f_i(\vz_{rt}), g_i(\cdot)) \text{ (GCfLDS)}%, i = 1,...,n
+ \end{split}\]
+ where $f_i$ is a nonlinear function parameterized by a neural network
+ \item Linear dynamics: simple, tractable, interpretable (?)
+ \item Nonlinear observation: flexibility
 \end{itemize}
 \end{frame}
+
+\begin{frame}
+\frametitle{Inference algorithm: AEVB (high level idea)}
+%\begin{itemize}
+%\item Auto-encoding Variational Bayes (AEVB)
+\begin{itemize}
+\item Auto-encoding Variational Bayes (AEVB)
+\item Learn a mapping (recognition model) from data to the \alert{approximate posterior distribution of latent variable}.
+\item Jointly optimize the generative model parameters and recognition model parameters.
+\item Naturally incorporate stochastic optimization to handle large datasets.
+\end{itemize}
+%\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Inference algorithm: AEVB (algorithm)}
+\begin{itemize}
+\item Decompose ELBO by trials
+\[\begin{split}
+\text{ELBO}(\theta, q) %=& \int \left[\log p_{\theta}(\vx, \vz) - \log q(\vz)\right] q(\vz) d\vz\\
+=& \sum_{r=1}^{R} \int \left[\log p_{\theta}(\vx_r, \vz_r) - \log q(\vz_r)\right] q(\vz_r) d\vz_r 
+\end{split}\]
+\item Map data $\vx_r$ to $q(\vz_r)$ by a parameterized function
+\[q(\vz_r) = q_\phi(\vz_r; \vx_r) = \N\left(\mu_\phi(\vx_r), \Sigma_\phi(\vx_r)\right)\]
+\item Learn both $\theta$ and $\phi$ by optimizing ELBO
+\[\text{ELBO}(\theta, \phi) = \sum_{r=1}^{R} \int \left[\log p_{\theta}(\vx_r, \vz_r) - \log q_\phi(\vz_r; \vx_r)\right] q_\phi(\vz_r; \vx_r) d\vz_r \]
+\item Do stochastic optimization with gradient of a single trial
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Inference algorithm: AEVB (important details)}
+\begin{itemize}
+\item Specific parameterization of the recognition model
+\[q(\vz_r) = q_\phi(\vz_r; \vx_r) = \N\left(\mu_\phi(\vx_r), \Sigma_\phi(\vx_r)\right)\]
+\vspace{-0.5cm}
+\begin{itemize}
+\item Block tri-diagonal precision matrix that agrees with Markovian structure
+\item Potentially useful to perform filtering in an online fashion
+\end{itemize}
+\item Reparameterization trick for stochastic optimization
+\begin{itemize}
+\item Easy implementation
+\item Low variance
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Real data analysis: primate visual cortex}
+%\hspace{-1cm}
+\begin{tabular}{ccc}
+Firing rate & \\
+\begin{tabular}{c}
+\includegraphics[scale=0.45,clip = true]{figs/flds/fig_V1_single_3concat_onlyobservation.pdf} 
+\end{tabular}
+&
+\begin{tabular}{c}
+%PLDS \\
+%\includegraphics[scale=0.5,clip = true]{figs/flds/fig_V1_mat_trajectory_3concat.pdf}\\
+%PfLDS \\
+%\includegraphics[scale=0.5,clip = true]{figs/flds/fig_V1_py_trajectory_3concat.pdf}
+\end{tabular}
+\end{tabular}
+\end{frame}
+
+\begin{frame}
+\frametitle{Real data analysis: primate visual cortex}
+%\hspace{-1.2cm}
+\begin{tabular}{ccc}
+\visible<1->Firing rate & \visible<2->{\hspace{-0.6cm}Latent projection} & \visible<3->{\hspace{-0.6cm}1-step-ahead prediction}\\
+%\hline
+\begin{tabular}{c}
+\visible<1->{\includegraphics[scale=0.45,clip = true]{figs/flds/fig_V1_single_3concat.pdf}}
+%\visible<2->{\includegraphics[scale=0.5,clip = true]{figs/flds/fig_V1_single_3concat.pdf} }
+\end{tabular}
+&
+\hspace{-0.6cm}
+\begin{tabular}{c}
+\visible<2->{\scriptsize{PLDS} \\
+\includegraphics[scale=0.4,clip = true]{figs/flds/fig_V1_mat_trajectory_3concat.pdf}\\
+\scriptsize{PfLDS} \\
+\includegraphics[scale=0.4,clip = true]{figs/flds/fig_V1_py_trajectory_3concat.pdf}}
+\end{tabular}
+&
+\hspace{-0.6cm}
+\visible<3->{\begin{tabular}{c}
+\scriptsize{MSE reduction}\\
+\includegraphics[scale=0.40,clip = true, trim = 0cm 0cm 0cm 0.2cm]{figs/flds/fig_V1_MSE_3concat.pdf}\\
+\scriptsize{NLL reduction}\\
+\includegraphics[scale=0.40,clip = true, trim = 0cm 0cm 0cm 0.2cm]{figs/flds/fig_V1_NLL_3concat.pdf}\\
+\end{tabular}}
+\end{tabular}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Real data analysis: M1}
+\end{frame}
+
+
 
 %%%%%%%%%%%%%%%%%%%%%% ROI detection %%%%%%%%%%%%%%%%%%%%%%%%%
 \section[]{Region of Interest Detection for Calcium Imaging Data}
