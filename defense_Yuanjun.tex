@@ -203,6 +203,8 @@ TODO: add a page for spike train
 \end{itemize}
 \end{frame}
 
+
+%%%%%%%%%%%%%%%%%%%%%%% GCLDS %%%%%%%%
 \subsection[]{Generalized count linear dynamical system}
 \begin{frame}
 \frametitle{Motivation}
@@ -277,9 +279,9 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{itemize}
 \item VBEM: Optimize $\text{ELBO}(\theta, q) \leq \log p_\theta(\vx)$ iteratively %by \alert{coordinate ascent}
 \begin{itemize}
-\item E-step: For a fixed $\theta$, optimize $q$ (such that $q(\vz) \approx p_{\theta}(\vz | \vx)$)
+\item E-step: For a fixed $\theta$, optimize $q$ %(such that $q(\vz) \approx p_{\theta}(\vz | \vx)$)
 \item M-step: For a fixed $q$, optimize $\theta$
-\item Iterate between E-step and M-step until convergence %, each iteration gives a higher ELBO and hopefully a higher log likelihood
+%\item Iterate between E-step and M-step until convergence %, each iteration gives a higher ELBO and hopefully a higher log likelihood
 \end{itemize}
 \item VBEM for GCLDS 
 \begin{itemize}
@@ -290,10 +292,6 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item M-step: convex optimization + analytical solution
 \end{itemize}
 \end{itemize}
-\end{frame}
-
-\begin{frame}
-TODO: add George reaching period figure
 \end{frame}
 
 
@@ -314,15 +312,107 @@ TODO: add George reaching period figure
  \hline
 \end{tabular}
 \end{center}
-
 \end{itemize}
 \end{frame}
 
 
+\begin{frame}
+\frametitle{Real data analysis: data}
+\begin{tabular}{ cc } 
+\includegraphics[width = 0.45\textwidth]{./figs/gclds/fig_monkey.png}&
+\includegraphics[width = 0.45\textwidth]{./figs/gclds/fig_var_obs_Move_seq14.pdf}
+\end{tabular}
+\begin{itemize}
+\item Center-out reaching experiments
+\item Multi-electrode array recording
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Real data analysis: algorithms}
+\begin{itemize}
+\item Main algorithms to be compared
+\begin{itemize}
+\item \alert{PLDS}: Poisson observation
+\item \alert{GCLDS-full}: Generalized count observation, individual $g(\cdot)$ across neurons
+\end{itemize}
+\item Two control cases for GCLDS
+\begin{itemize}
+\item \alert{GCLDS-linear}: truncated linear $g(\cdot)$ (truncated Poisson)
+\item \alert{GCLDS-simple}: $g(\cdot)$ shared across neurons (up to a linear function)
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Real data analysis: single neuron fit}
+\begin{tabular}[t]{ccc}
+		\raisebox{-0.85\totalheight}{\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_962346_seq14_xDim8_neu1_g.pdf}}&
+		\raisebox{-0.85\totalheight}{\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_962346_seq14_xDim8_neu1_mean.pdf}}&
+		\raisebox{-0.85\totalheight}{\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_962346_seq14_xDim8_neu1_var.pdf}}\\
+
+		%B)&\raisebox{-0.85\totalheight}{\includegraphics[width=0.3\textwidth,clip = true]{figs/fig_gclds/fig_1625526_seq14_xDim8_neu2_g.pdf}}&
+		%\raisebox{-0.85\totalheight}{\includegraphics[width=0.3\textwidth,clip = true]{figs/fig_gclds/fig_1625526_seq14_xDim8_neu2_mean.pdf}}&
+		%\raisebox{-0.85\totalheight}{\includegraphics[width=0.3\textwidth,clip = true]{figs/fig_gclds/fig_1625526_seq14_xDim8_neu2_var.pdf}}\\
+		\raisebox{-0.85\totalheight}{\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_962346_seq14_xDim8_neu3_g.pdf}}&
+		\raisebox{-0.85\totalheight}{\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_962346_seq14_xDim8_neu3_mean.pdf}}&
+		\raisebox{-0.85\totalheight}{\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_962346_seq14_xDim8_neu3_var.pdf}}\\
+				%&{\graphFont Dates}&\\
+\end{tabular}
+\end{frame}
+
+\begin{frame}
+\frametitle{Real data analysis: population fit}
+%\begin{centering}
+\begin{tabular}[t]{ccc}
+\includegraphics[scale=0.43,clip = true]{figs/gclds/fig_MSE_band_George_Move_NULL.pdf}&
+\includegraphics[scale=0.43,clip = true]{figs/gclds/fig_likelihood_band_George_Move_NULL.pdf}&
+\includegraphics[scale=0.43,clip = true]{figs/gclds/fig_var_JOB962346_seq14_xDim8_plot.pdf}
+\end{tabular}
+\begin{itemize}
+\item Leave-one-neuron-out prediction
+\begin{itemize}
+\item Separate trials into training and testing
+\item Use training data to learn parameters
+\item For test data, drop one neuron and use other neurons to predict its firing rate
+\end{itemize}
+\end{itemize}
+%\end{centering}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Conclusion and discussion}
+\begin{itemize}
+\item Summary
+\begin{itemize}
+\item Incorporated generalized count family into linear dynamical system models.
+\item Developed VBEM algorithm.
+\item Observed superior fitted result on real neural data.
+\end{itemize}
+\item Extensions
+\begin{itemize}
+\item $g(\cdot)$ vary across time?
+\item Share information of $g(\cdot)$ across neurons? (hierarchical model?)
+\item Generative models for under-dispersion?
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%% fLDS %%%%%%%%
 \subsection[]{Linear dynamical neural population models through nonlinear embeddings}
 
 \begin{frame}
-\frametitle{motivation}
+\frametitle{Motivation}
+\begin{itemize}
+\item Neural activities lie in a low-dimensional \alert{manifold} rather than a \alert{linear subspace}
+\item TODO: put V1 data?
+\end{itemize}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%% ROI detection %%%%%%%%%%%%%%%%%%%%%%%%%
