@@ -296,7 +296,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 
 
 \begin{frame}
-\frametitle{Result}
+\frametitle{Experiments}
 \begin{itemize}
 \item For both simulated and real dataset, we compare GCLDS with PLDS (Poisson observation model)
 %\XSolid \Checkmark 
@@ -307,7 +307,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
  \hline
   & Mean & Variance & Likelihood \\
  \hline
- PLDS & \cmark & \alert{\xmark}& \alert{\xmark} \\ 
+ PLDS & \cmark & \xmark& \xmark \\ 
  GCLDS &\cmark &\cmark &\cmark \\ 
  \hline
 \end{tabular}
@@ -319,7 +319,8 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{frame}
 \frametitle{Real data analysis: data}
 \begin{tabular}{ cc } 
-\includegraphics[width = 0.45\textwidth]{./figs/gclds/fig_monkey.png}&
+{\small Data} & {\small Variance and mean of spike counts}\\
+\includegraphics[width = 0.40\textwidth]{./figs/gclds/fig_monkey.png}&
 \includegraphics[width = 0.45\textwidth]{./figs/gclds/fig_var_obs_Move_seq14.pdf}
 \end{tabular}
 \begin{itemize}
@@ -350,6 +351,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{frame}
 \frametitle{Real data analysis: single neuron fit}
 \begin{tabular}[t]{ccc}
+{\small Fitted $g(\cdot)$} & {\small Fitted mean} & {\small Fitted variance}\\
 		\raisebox{-0.85\totalheight}{\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_962346_seq14_xDim8_neu1_g.pdf}}&
 		\raisebox{-0.85\totalheight}{\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_962346_seq14_xDim8_neu1_mean.pdf}}&
 		\raisebox{-0.85\totalheight}{\includegraphics[scale=0.5,clip = true]{figs/gclds/fig_962346_seq14_xDim8_neu1_var.pdf}}\\
@@ -377,12 +379,12 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \end{itemize}
 \begin{center}
 \begin{tabular}[t]{cc}
+{\small MSE reduction} & {\small NLL reduction} \\
 \includegraphics[scale=0.5,clip = true]{figs/gclds/fig_MSE_band_George_Move_NULL.pdf}&
 \includegraphics[scale=0.5,clip = true]{figs/gclds/fig_likelihood_band_George_Move_NULL.pdf}%&
 %\includegraphics[scale=0.43,clip = true]{figs/gclds/fig_var_JOB962346_seq14_xDim8_plot.pdf}
 \end{tabular}
 \end{center}
-
 %\end{centering}
 \end{frame}
 
@@ -393,7 +395,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{itemize}
 \item Summary
 \begin{itemize}
-\item Incorporated generalized count family into linear dynamical system models.
+\item Incorporated generalized count family into state space models.
 \item Developed VBEM algorithm.
 \item Observed superior fitted result on real neural data.
 \end{itemize}
@@ -432,15 +434,15 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{frame}
 \frametitle{Model formulation: fLDS}
 \begin{itemize}
- \item Linear dynamical systems with nonlinear link and count observation
+ \item Linear dynamical systems with \alert{nonlinear link} and count observation
  \[\begin{split}
  \vz_{r1} \sim& \N(\mu_1, Q_1)\\
  \vz_{r(t+1)} | \vz_{rt} \sim& \N(A \vz_{rt}, Q)\\
- x_{rti} \sim& \text{Poisson}(f_i(\vz_{rt})) \text{ (PfLDS) } \\
- &\text{   or }\mathcal{GC}(f_i(\vz_{rt}), g_i(\cdot)) \text{ (GCfLDS)}%, i = 1,...,n
+ x_{rti} \sim& \text{Poisson}(\alert{f}_i(\vz_{rt})) \text{ (PfLDS) } \\
+ &\text{   or }\mathcal{GC}(\alert{f}_i(\vz_{rt}), g_i(\cdot)) \text{ (GCfLDS)}%, i = 1,...,n
  \end{split}\]
  where $f_i$ is a nonlinear function parameterized by a neural network
- \item Linear dynamics: simple, tractable, interpretable (?)
+ \item Linear dynamics: simple, tractable, interpretable
  \item Nonlinear observation: flexibility
 \end{itemize}
 \end{frame}
@@ -494,10 +496,26 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \end{frame}
 
 \begin{frame}
+\frametitle{Experiments}
+\begin{center}
+\begin{tabular}{ ccccc } 
+ \hline
+  & Mean & Variance & Likelihood & \alert{Concise representation}\\
+ \hline
+ PLDS & \cmark & \xmark& \xmark &  \xmark  \\ 
+ GCLDS &\cmark &\cmark &\cmark &  \xmark  \\ 
+ \alert{PfLDS} & \cmark & \xmark& \xmark &   \cmark\\ 
+ \alert{GCfLDS} &\cmark &\cmark &\cmark &  \cmark \\ 
+ \hline
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}
 \frametitle{Real data analysis: primate visual cortex}
 %\hspace{-1cm}
-\begin{tabular}{ccc}
-Firing rate & \\
+\begin{tabular}{cc}
+\small{Firing rate} & \\
 \begin{tabular}{c}
 \includegraphics[scale=0.45,clip = true]{figs/flds/fig_V1_single_3concat_onlyobservation.pdf} 
 \end{tabular}
@@ -511,11 +529,13 @@ Firing rate & \\
 \end{tabular}
 \end{frame}
 
+
+
 \begin{frame}
 \frametitle{Real data analysis: primate visual cortex}
 %\hspace{-1.2cm}
 \begin{tabular}{ccc}
-\visible<1->Firing rate & \visible<2->{\hspace{-0.6cm}Latent projection} & \visible<3->{\hspace{-0.6cm}1-step-ahead prediction}\\
+{\small \visible<1->Firing rate} & \visible<2->{\hspace{-0.6cm}\small{Latent projection}} & \visible<3->{\hspace{-0.6cm}\small{1-step-ahead prediction}}\\
 %\hline
 \begin{tabular}{c}
 \visible<1->{\includegraphics[scale=0.45,clip = true]{figs/flds/fig_V1_single_3concat.pdf}}
@@ -542,9 +562,60 @@ Firing rate & \\
 
 
 \begin{frame}
-\frametitle{Real data analysis: M1}
+\frametitle{Real data analysis: Primate motor cortex}
+\begin{tabular}{ cc } 
+{\small Data} & {\small Reaching trajectory} \\
+\includegraphics[width = 0.45\textwidth]{./figs/gclds/fig_monkey.png}&
+\includegraphics[width = 0.40\textwidth]{./figs/flds/fig_GeorgeMove_trajectory.pdf}
+\end{tabular}
 \end{frame}
 
+
+\begin{frame}
+\frametitle{Real data analysis: Primate motor cortex}
+\begin{itemize}
+\item Latent projection with $2$ latent dimensions
+\end{itemize}
+\begin{tabular}{ ccc } 
+{\small Reaching trajectory} & {\small PLDS} & {\small PfLDS} \\
+\includegraphics[width = 0.30\textwidth]{./figs/flds/fig_GeorgeMove_trajectory.pdf}&
+\includegraphics[width = 0.30\textwidth]{./figs/flds/fig_GeorgeMove_2dvisual_mat_PLDS.pdf}&
+\includegraphics[width = 0.30\textwidth]{./figs/flds/fig_GeorgeMove_2dvisual_py_PLDS.pdf}
+\end{tabular}
+\end{frame}
+
+\begin{frame}
+\frametitle{Real data analysis: Primate motor cortex}
+\begin{itemize}
+\item One-step-ahead predictive performance
+\end{itemize}
+\begin{center}
+\begin{tabular}{ cc} 
+{\small MSE reduction} & {\small NLL reduction}\\
+\includegraphics[scale = 0.6]{./figs/flds/fig_GeorgeMove_MSE_GC.pdf}&
+\includegraphics[scale = 0.6]{./figs/flds/fig_GeorgeMove_NLL_GC.pdf}
+\end{tabular}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Conclusion and discussion}
+\begin{itemize}
+\item Summary
+\begin{itemize}
+\item Incorporated nonlinear observation into state space models.
+\item Developed AEVB algorithm (flexible and scalable).
+\item Obtain concise latent representation.
+\end{itemize}
+\item Future work
+\begin{itemize}
+\item Better stochastic optimization scheme
+\item Interpretable nonlinearity
+\item Application on more complex datasets
+\end{itemize}
+\end{itemize}
+\end{frame}
 
 
 %%%%%%%%%%%%%%%%%%%%%% ROI detection %%%%%%%%%%%%%%%%%%%%%%%%%
