@@ -20,6 +20,7 @@
 \usepackage{rotating}
 \usepackage{hyperref}
 \usepackage{tikz}
+\usepackage{bbm}
 \usetikzlibrary{fit,positioning}
 \usepackage[backend=bibtex,style=authoryear]{biblatex}
 \usepackage{pifont}% http://ctan.org/pkg/pifont
@@ -644,7 +645,7 @@ TODO: incorporate a video?
 \frametitle{Model formulation: objective}
 \begin{itemize}
 \item Structured matrix factorization
-\begin{equation}
+\[
 %\label{equ:opt}
 \begin{aligned}
 & \underset{D, A}{\text{minimize}}
@@ -654,7 +655,7 @@ TODO: incorporate a video?
 & 
 & & \|A_k\|_2 \leq c_k,
 \end{aligned}
-\end{equation}
+\]
 \item $\mathcal{D}_{w}^+$: non-negative vectors whose nonzero values is within a $w \times w$ window
 \item $f_D(D)$ regularizes the neuron shape (discussed later)
 \item $\|A_k\|_2 \leq c_k$ avoids degenerate solution
@@ -680,7 +681,7 @@ TODO: incorporate a video?
 \frametitle{Shape fine tuning}
 \begin{itemize}
 \item Given current residue $R$, an identified center pixel $p_k$, denote $S_k$ as a $w \times w$ window centered at $p_k$
-\begin{equation}
+\[
 \begin{aligned}
 & \underset{D_k, A_k}{\text{minimize}}
 & & \| R - D_k A_k^T \|^2 + f(D_k), \\%\sum_{i = 1}^3 \lambda_i f_i(D_k),\\
@@ -691,7 +692,7 @@ TODO: incorporate a video?
 & 
 & & \|A_k\|_2 \leq c_k,
 \end{aligned}
-\end{equation}
+\]
 %\begin{itemize}
 \item $f(D_k) = \sum_{i=1}^3 \lambda_i f_i(D_k)$
 %where
@@ -757,28 +758,98 @@ TODO: incorporate a video?
 \section[]{Maximum Entropy Flow Networks}
 
 \begin{frame}
-\frametitle{Introduction: maximum entropy principle}
+\frametitle{Maximum entropy principle}
 \begin{itemize}
+\item \alert{Entropy}: for a continuous distribution with density $p(\vz)$ where $\vz \in \mathbb{R}^d$, the entropy is defined as
+\[H(p) = - \int p(\vz) \log p(\vz)  d \vz.\]
+A popular measure of diversity and information content.
 \item \alert{Maximum entropy principle}: Subject to some given prior knowledge (moment/support constraints), the distribution that makes \alert{minimal additional assumptions} is that which has the \alert{largest entropy} of any distribution obeying those constraints
-\item Useful for model formulation and hypothesis testing.
-\item \alert{Problem}: hard to learn and sample from maximum entropy distribution when constraints are complicated
 \end{itemize}
 \end{frame}
 
 \begin{frame}
+\frametitle{Maximum entropy problem}
+\begin{itemize}
+\item Maximum entropy problem
+\begin{eqnarray*}
+%\substack{E_{\mZ\sim p}[T(\mZ)]=0 \\ \supp(p)=\mathcal{X}}
+p^{*} &=& \text{maximize}~~~ H(p) \\
+&& \text{subject to} ~~~E_{\mZ\sim p}[T(\mZ)]=0 \nonumber\\
+&& ~~~~~~~~~~~~~~~~~~\supp(p)=\mathcal{Z} \nonumber,
+\end{eqnarray*}
+where $T(\vz) = (T_1(\vz),...,T_m(\vz)):\mathcal{Z}\rightarrow \mathbb{R}^{m}$ is the vector of known statistics, and $\mathcal{Z}$ is the given support.
+%\item Useful for model formulation and hypothesis testing.
+%\item \alert{Problem}: hard to learn and sample from maximum entropy distribution when constraints are complicated
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Application example: neuroscience}
+\end{frame}
+
+\begin{frame}
+\frametitle{Application example: texture modeling}
+\end{frame}
+
+\begin{frame}
 \frametitle{Gibbs distribution}
+\begin{itemize}
+\item Under standard regularity conditions, the maximum entropy problem can be solved by Lagrange multipliers, yielding an exponential family $p^*$ of the form (Gibbs distribution):
+\[\label{curmet}
+p^*(\vz) \propto e^{<\eta, T(\vz)>} \mathbbm{1}(\vz \in \mathcal{Z})
+\]
+\item Identifying $\eta \in \mathbb{R}^m$ can be hard in high-dimensional setting.
+\item Sampling from the distribution can be hard. MCMC methods can take long to mix.
+\item \alert{Question}: is there a better way to do this?
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Idea: normalizing flow}
+\begin{itemize}
+\item Considering a family of smooth and invertible transformation (\alert{normalizing flow}) \[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}\]
+\item Identify a transformation $f_{\phi^*} \in \mathcal{F}$ that transforms a simple distribution $p_0$ to approximate the maximum entropy distribution.
+\begin{eqnarray*}\label{optobj}
+%\substack{E_{\mZ\sim p}[T(\mZ)]=0 \\ \supp(p)=\mathcal{X}}
+\phi^{*} &=& \text{maximize}~~~ H(p_\phi) \\
+&& \text{subject to} ~~~E_{\mZ_0\sim p_0}[T(f_\phi(\mZ_{0}))]=0 \nonumber\\
+&& ~~~~~~~~~~~~~~~~~~\supp(p_\phi)=\mathcal{Z}. \nonumber
+\end{eqnarray*}
+where $p_\phi(\vz)$ is the distribution of $f_\phi(Z_0)$ for $Z_0 \sim p_0$.
+\[p_\phi(\vz) = p_0( f_\phi^{-1}(\vz) ) | \det (J_\phi (\vz)) |^{-1}\]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Augmented Lagrangian method}
+\begin{itemize}
+\item Denote $R(\phi) = E\left(T(f_\phi( \mZ_0))\right) \in \mathbb{R}^m$, augmented Lagrangian method minimizes the objective
+\[L(\phi; \lambda, c) = - H(p_\phi) + \lambda^{\top} R(\phi) + \dfrac{c}{2}||R(\phi)||^2\]
+for a sequence of $\lambda \in \mathbb{R}^m$ and $c \geq 0$.
+\item Update rule: at iteration $k$, given $\lambda_k$ and $c_k$, suppose $\phi_k$ optimizes $L(\phi; \lambda_k, c_k)$, update $\lambda$ and $c$ by
+\[\begin{split}
+\lambda_{k+1} =& \lambda_k + c_k R(\phi_k)\\
+c_{k+1} =&\begin{cases}
+\beta c_{k} & ||R(\phi_{k})||>\gamma ||R(\phi_{k-1})|| \\
+c_k & \text{otherwise}
+\end{cases}
+\end{split}\]
+for some $\gamma \in (0,1)$, $\beta > 1$
+\end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Normalizing flow}
-\end{frame}
-
-\begin{frame}
-\frametitle{MEFN formulation}
-\end{frame}
-
-\begin{frame}
-\frametitle{Learning by augmented Lagrangian method}
+\frametitle{Augmented Lagrangian method in stochastic setting}
+\begin{itemize}
+\item Denote $R(\phi) = E\left(T(f_\phi( \mZ_0))\right) \in \mathbb{R}^m$, augmented Lagrangian method minimizes the objective
+\[L(\phi; \lambda, c) = - H(p_\phi) + \lambda^{\top} R(\phi) + \dfrac{c}{2}||R(\phi)||^2\]
+for a sequence of $\lambda \in \mathbb{R}^m$ and $c \geq 0$.
+\item Here $R(\phi) = E\left(T(f_\phi( \mZ_0))\right) \in \mathbb{R}^m$ is intractable, but we can approximate with a sampled version.
+\[R(\phi) \approx \frac{1}{n} \sum_{i=1}^nT(f_\phi( \vz^{(i)})), \vz^{(i)} \sim p_0\]
+We can then optimize the objective by stochastic gradient descent.
+\end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -790,11 +861,38 @@ TODO: incorporate a video?
 \end{frame}
 
 \begin{frame}
-\frametitle{Conclusion}
+\frametitle{Conclusion and discussion}
+\begin{itemize}
+\item Summary
+\begin{itemize}
+\item Solve maximum entropy problem by optimizing a normalizing flow
+\item Combining augmented Lagrangian optimization with stochastic optimization
+\item Promising result on simulation and real data
+\end{itemize}
+\item Future work
+\begin{itemize}
+\item Normalizing flow structure
+\item Better constrained stochastic optimization algorithm
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+%\begin{frame}
+%\frametitle{Acknowledgement}
+%\end{frame}
+
+
+\begin{frame}
+\frametitle{Table of Contents}
+\tableofcontents
 \end{frame}
 
 \begin{frame}
-\frametitle{Acknowledgement}
+\frametitle{fLDS: AEVB form (backup)}
+\end{frame}
+
+\begin{frame}
+\frametitle{MEFN: Normalizing flow structures (backup)}
 \end{frame}
 
 \end{document}
