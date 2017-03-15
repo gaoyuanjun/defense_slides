@@ -31,6 +31,10 @@
 \input{texdefs.tex}
 
 
+%TODO
+% add citation
+
+
 %\usetheme{Warsaw}
 \usetheme{metropolis}
 
@@ -47,7 +51,7 @@
 \beamertemplatetransparentcovereddynamicmedium
 \setbeamertemplate{section in toc}[ball unnumbered]
 \setbeamertemplate{subsection in toc}[ball unnumbered]
-
+\setbeamercolor{background canvas}{bg=white}
 \begin{frame}\vspace*{1.5cm}
 \maketitle
 \begin{center}
@@ -231,7 +235,7 @@ p_{\mathcal{GC}}(x; \theta, g(\cdot)) \propto& \frac{\exp(\theta \cdot x + g(x) 
 where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item Parameterizes \alert{all} the count distributions \alert{redundantly}.
 \item Given $g(\cdot)$, $\theta$ controls the expectation.
-\item $g(\cdot)$ controls the ``shape'' of the distribution. Convex/concave $g(\cdot)$ implies over/under-dispersion.
+\item $g(\cdot)$ controls the ``shape'' of the distribution. Convex/concave/linear $g(\cdot)$ implies overdispersed/underdispered/Poisson distribution.
 \end{itemize}
 \end{frame}
 
@@ -406,6 +410,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item Share information of $g(\cdot)$ across neurons? (hierarchical model?)
 \item Generative models for under-dispersion?
 \end{itemize}
+\item \alert{Gao Y}, Buesing L, Shenoy KV, Cunningham JP (2015) High-dimensional neural spike train analysis with generalized count linear dynamical systems. NIPS 2015.
 \end{itemize}
 \end{frame}
 
@@ -615,6 +620,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item Interpretable nonlinearity
 \item Application on more complex datasets
 \end{itemize}
+\item \alert{Gao Y}*, Archer E*, Paninski L, Cunningham JP (2016) Linear dynamical neural population models through nonlinear embeddings. NIPS 2016. (* = equal contribution)
 \end{itemize}
 \end{frame}
 
@@ -750,6 +756,7 @@ TODO: incorporate a video?
 \item Online ROI detection
 \item Motion correction, background elimination
 \end{itemize}
+\item {\scriptsize Pnevmatikakis EA, Soudry D, \alert{Gao Y}, Machado TA, Merel J, Pfau D, Reardon T, Mu Y, Lacefield C, Yang W, Ahrens M, Bruno R, Jessell TM, Peterka DS, Yuste R, Paninski L (2016) Simultaneous denoising, deconvolution, and demixing of calcium imaging data. Neuron, 89(2), 285-299.}
 \end{itemize}
 \end{frame}
 
@@ -761,16 +768,16 @@ TODO: incorporate a video?
 \frametitle{Maximum entropy principle}
 \begin{itemize}
 \item \alert{Entropy}: for a continuous distribution with density $p(\vz)$ where $\vz \in \mathbb{R}^d$, the entropy is defined as
-\[H(p) = - \int p(\vz) \log p(\vz)  d \vz.\]
-A popular measure of diversity and information content.
-\item \alert{Maximum entropy principle}: Subject to some given prior knowledge (moment/support constraints), the distribution that makes \alert{minimal additional assumptions} is that which has the \alert{largest entropy} of any distribution obeying those constraints
+\[H(p) = - \int p(\vz) \log p(\vz)  d \vz = E_{Z \sim p} \left[ -\log p(Z) \right].\]
+A popular measure of diversity or information content.
+\item \alert{Maximum entropy (ME) principle}: Subject to some given prior knowledge (moment or support constraints), the distribution that makes \alert{minimal additional assumptions} is that which has the \alert{largest entropy} of any distribution obeying those constraints
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Maximum entropy problem}
 \begin{itemize}
-\item Maximum entropy problem
+\item Maximum entropy (ME) problem
 \begin{eqnarray*}
 %\substack{E_{\mZ\sim p}[T(\mZ)]=0 \\ \supp(p)=\mathcal{X}}
 p^{*} &=& \text{maximize}~~~ H(p) \\
@@ -784,11 +791,14 @@ where $T(\vz) = (T_1(\vz),...,T_m(\vz)):\mathcal{Z}\rightarrow \mathbb{R}^{m}$ i
 \end{frame}
 
 \begin{frame}
-\frametitle{Application example: neuroscience}
-\end{frame}
-
-\begin{frame}
-\frametitle{Application example: texture modeling}
+\frametitle{Applications of maximum entropy}
+\begin{itemize}
+\item \alert{Texture modeling}: generate an image with a certain texture by specifying expected value of features relevant to texture.
+\item \alert{Neuroscience}: generate a distribution of neural activity by specifying a set of features (pairwise correlation etc.) for hypothesis testing.
+\item \alert{Ecology}: Fit species distribution with certain feature constraints (altitude, temperature etc.).
+\item \alert{Finance}: Fit the risk-neutral distribution of an asset given a list of option prices.
+\item ...
+\end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -853,11 +863,82 @@ We can then optimize the objective by stochastic gradient descent.
 \end{frame}
 
 \begin{frame}
-\frametitle{Simulation: Dirichlet}
+\frametitle{Experiment: Dirichlet}
+\begin{itemize}
+\item Dirichlet distribution is the ME distribution on a simplex $\mathcal{S}=\{\vz = (z_1,\dots,z_{d-1}):z_i\geq 0\text{ and }\sum_{k=1}^{d-1}z_k\leq 1\}$ with expetation on the log of each coordinate $E[\log Z_k] = \kappa_k (k = 1,...,d)$, where $Z_d = 1 - \sum_{k=1}^{d-1} Z_k$.
+\end{itemize}
+\begin{tabular}[t]{ccc}
+\vspace{-0cm}
+\includegraphics[scale=0.3,clip = true, trim=1cm 1.5cm 1cm 1.5cm]{figs/MEFN/normal_contours.pdf}&
+\includegraphics[scale=0.3,clip = true, trim=1cm 1.5cm 1cm 1.5cm]{figs/MEFN/network_contours_moments.pdf}&
+\includegraphics[scale=0.3,clip = true, trim=1cm 1.5cm 1cm 1.5cm]{figs/MEFN/true_contours.pdf}\\
+{\scriptsize Initial distribution $p_0$}& \parbox{0.3\textwidth}{\scriptsize MEFN result $p_{\phi^*}$ (Control case: moment matching)}&{\scriptsize Ground truth $p^*$}\\
+%& {\small (Control case: moment matching network)} & \\
+%\\
+\end{tabular}
 \end{frame}
 
 \begin{frame}
-\frametitle{Application: Texture modeling}
+\frametitle{Experiment: Texture modeling}
+\begin{itemize}
+\item Sample from the space of images $\vz \in [0,1]^{224 \times 224 \times 3}$ where $T(\vz): [0,1]^{224 \times 224 \times 3} \rightarrow \mathbb{R}$ is a complicated ``texture loss'' defined in \cite{ulyanov2016texture}.
+\item \cite{ulyanov2016texture} proposes texture net, which solves the problem by
+\[\min E_{\mZ \sim p_0}\left[ T(f_\phi(\mZ)) \right] \]
+without considering entropy term.
+\item We compare our formulation with texture net. We use real-nvp \parencite{dinh2016density} as the normalizing flow structure
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Experiment: Texture modeling}
+\centering
+{\scriptsize
+\begin{tabular}[t]{ccc}
+Input & \hspace{-0.3cm} \parbox{0.3\textwidth}{\centering Texture net \\\parencite{ulyanov2016texture}} & \hspace{-0.3cm} MEFN (ours) \\
+%\vspace{-0cm}
+\includegraphics[scale=0.3,clip = true]{figs/MEFN/fig_texture_raw.jpg}&
+\hspace{-0.3cm}\includegraphics[scale=0.3,clip = true]{figs/MEFN/fig_texture_noent_0.jpg}&
+\hspace{-0.3cm}\includegraphics[scale=0.3,clip = true, trim=0cm 0cm 0cm 0cm]{figs/MEFN/fig_texture_ent_0.jpg}
+\vspace{0.6cm}
+\\
+Texture cost & \hspace{-0.3cm} Negative entropy & \hspace{-0.3cm} RGB histogram\\
+\includegraphics[scale=0.33,clip = true]{figs/MEFN/fig_texture_cost.pdf}&
+\hspace{-0.3cm}\includegraphics[scale=0.33,clip = true]{figs/MEFN/fig_texture_entropy.pdf}&
+\hspace{-0.3cm}\includegraphics[scale=0.33,clip = true]{figs/MEFN/fig_texture_RGB_hist.pdf} \\
+%\\
+\end{tabular}
+}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Experiment: Texture modeling}
+\begin{itemize}
+\item We provide two numerical measure for assessing sample diversity given a set of images $\{\vz^{(1)},...,\vz^{(n)}\}$.
+\end{itemize}
+\centering
+\begin{table}[htpb]
+%\caption{Quantitative measure of image diversity using $20$ randomly sampled images}
+%\label{sample-table}
+\begin{center}
+\begin{tabular}{l | l | lll}
+Method  & $d_{L^2}$& SST & SSW & SSB \\
+\hline 
+Texture net  & 11534 & 128680 & 109577 & 19103\\
+MEFN   & 17014 & 175604 & 161639 & 13964 \\
+\end{tabular}
+\end{center}
+\begin{itemize}
+\item Mean Euclidean distance: $d_{L^2} = \text{mean}_{i \neq j} \|\vz^{(i)} - \vz^{(j)} \|_2^2$
+\item ANOVA: $\text{SST} = \text{SSW} + \text{SSB}$
+\begin{itemize}
+\item Total: $\text{SST} = \sum_{i,k} (z_k^{(i)} - \bar{z})^2$
+\item Within group: $\text{SSW} = \sum_{i,k} (z_k^{(i)} - \bar{z}_k)^2$ (larger $\Rightarrow$ better)
+\item Between group: $\text{SSB} = \sum_{k} n (\bar{z}_k - \bar{z})^2$ (smaller $\Rightarrow$ better)
+\end{itemize}
+\end{itemize}
+\label{tab:texture}
+\end{table}
 \end{frame}
 
 \begin{frame}
@@ -865,15 +946,17 @@ We can then optimize the objective by stochastic gradient descent.
 \begin{itemize}
 \item Summary
 \begin{itemize}
+\item Bridging information theory and deep learning
 \item Solve maximum entropy problem by optimizing a normalizing flow
 \item Combining augmented Lagrangian optimization with stochastic optimization
 \item Promising result on simulation and real data
 \end{itemize}
 \item Future work
 \begin{itemize}
-\item Normalizing flow structure
+\item Better normalizing flow structure
 \item Better constrained stochastic optimization algorithm
 \end{itemize}
+\item Loaiza G*, \alert{Gao Y}*, Cunningham JP (2017) Maximum entropy flow networks. ICLR 2017. (*=equal contribution) 
 \end{itemize}
 \end{frame}
 
