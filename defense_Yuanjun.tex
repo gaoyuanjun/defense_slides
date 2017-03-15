@@ -48,16 +48,26 @@
 
 \begin{document}
 
+\defbeamertemplate{subsection in toc}{bullets}{%
+  \leavevmode
+  \parbox[t]{2em}{\hspace{1em}\textbullet\hfill}%
+  \parbox[t]{\dimexpr\textwidth-1em\relax}{\inserttocsubsection}\par}
+\defbeamertemplate{section in toc}{sections numbered roman}{%
+  \leavevmode%
+  \MakeUppercase{\romannumeral\inserttocsectionnumber}.\ %
+  \inserttocsection\par}
+
 \beamertemplatetransparentcovereddynamicmedium
-\setbeamertemplate{section in toc}[ball unnumbered]
-\setbeamertemplate{subsection in toc}[ball unnumbered]
+\setbeamertemplate{section in toc}[sections numbered roman]
+\setbeamertemplate{subsection in toc}[bullets]
 \setbeamercolor{background canvas}{bg=white}
+
+
+%%%%%%%%%%%%%%%%%%% Title page %%%%%%%%%%%%%%%%%
 \begin{frame}\vspace*{1.5cm}
 \maketitle
 \begin{center}
 \vspace{-1cm}
-%Joint work with Buesing L, Shenoy KV, Cunningham JP 
-%\hspace*{1.25cm}\includegraphics[width=0.44\linewidth]{./figures/CoverSlide/officialblack2.jpg} \hspace*{1cm}
 \end{center}
 \end{frame}
 
@@ -65,9 +75,11 @@
 %%%%%%%%%%%%%%%%%%%%%%%% Overview %%%%%%%%%%%%%%%%%%
 \begin{frame}
 \frametitle{Overview}
-TODO: add a diagram for statistical criticizing
-
-TODO: add a page for spike train
+\centering
+\includegraphics[width = 0.50\textwidth]{./figs/gclds/fig_monkey.png}
+\begin{itemize}
+\item Brain + Big data = \alert{Opportunities}!
+\end{itemize}
 \end{frame}
 
 
