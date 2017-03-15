@@ -21,6 +21,8 @@
 \usepackage{hyperref}
 \usepackage{tikz}
 \usepackage{bbm}
+\usepackage{smartdiagram}
+\usesmartdiagramlibrary{additions}
 \usetikzlibrary{fit,positioning}
 \usepackage[backend=bibtex,style=authoryear]{biblatex}
 \usepackage{pifont}% http://ctan.org/pkg/pifont
@@ -78,10 +80,40 @@
 \centering
 \includegraphics[width = 0.50\textwidth]{./figs/gclds/fig_monkey.png}
 \begin{itemize}
-\item Brain + Big data = \alert{Opportunities}!
+\item Neuroscience + Big data = \alert{Opportunities}!
 \end{itemize}
 \end{frame}
 
+
+\begin{frame}
+\frametitle{Overview}
+%{\scripsize
+\begin{minipage}[t][3.5cm]{0.8\textwidth}
+\begin{center}
+\smartdiagramset{
+  uniform color list=blue!30!white for 4 items,
+  back arrow disabled=false,
+  additions={
+   additional item offset=0.85cm,
+   additional item border color=red,
+   additional arrow color=red,
+   additional arrow tip=stealth,
+   additional arrow line width=1pt,
+   additional arrow style=]-latex,
+   }
+ }
+\smartdiagramadd[flow diagram:horizontal]{%
+ {\scriptsize Data collection}, {\scriptsize Pre-processing}, {\scriptsize Modeling}, {\scriptsize Hypothesis testing}%
+ }{%
+ below of module2/Part II, below of module3/Part I, below of module4/Part III%
+ }
+\smartdiagramconnect{{]-latex}}{additional-module1/module2}
+\smartdiagramconnect{{]-latex}}{additional-module2/module3}
+\smartdiagramconnect{{]-latex}}{additional-module3/module4}
+\end{center}
+%}
+\end{minipage}
+\end{frame}
 
 \begin{frame}
 \frametitle{Table of Contents}
@@ -642,7 +674,10 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 
 \begin{frame}
 \frametitle{Introduction: calcium imaging data}
-TODO: incorporate a video?
+\begin{itemize}
+\item Basic principle: the \alert{spiking} activity of a neuron induce a transient increase in \alert{calcium concentration}, which can be indirectly observed by recording the \alert{fluorescent properties} of certain calcium indicators.
+\item Allows simultaneous recording from hundreds of thousands of neurons.
+\end{itemize}
 \end{frame}
 
 \begin{frame}
