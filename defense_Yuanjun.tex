@@ -35,7 +35,8 @@
 
 %TODO
 % add citation
-
+% add calcium videos
+% add normalizing flow illustration
 
 %\usetheme{Warsaw}
 \usetheme{metropolis}
@@ -913,6 +914,7 @@ We can then optimize the objective by stochastic gradient descent.
 \frametitle{Experiment: Dirichlet}
 \begin{itemize}
 \item Dirichlet distribution is the ME distribution on a simplex $\mathcal{S}=\{\vz = (z_1,\dots,z_{d-1}):z_i\geq 0\text{ and }\sum_{k=1}^{d-1}z_k\leq 1\}$ with expetation on the log of each coordinate $E[\log Z_k] = \kappa_k (k = 1,...,d)$, where $Z_d = 1 - \sum_{k=1}^{d-1} Z_k$.
+\item $10$ layers of planar flow \parencite{Rezende2015}.
 \end{itemize}
 \begin{tabular}[t]{ccc}
 \vspace{-0cm}
@@ -928,8 +930,8 @@ We can then optimize the objective by stochastic gradient descent.
 \begin{frame}
 \frametitle{Experiment: Texture modeling}
 \begin{itemize}
-\item Sample from the space of images $\vz \in [0,1]^{224 \times 224 \times 3}$ where $T(\vz): [0,1]^{224 \times 224 \times 3} \rightarrow \mathbb{R}$ is a complicated ``texture loss'' defined in \cite{ulyanov2016texture}.
-\item \cite{ulyanov2016texture} proposes texture net, which solves the problem by
+\item Sample from the space of images $\vz \in [0,1]^{224 \times 224 \times 3}$ where $T(\vz): [0,1]^{224 \times 224 \times 3} \rightarrow \mathbb{R}$ is a complicated ``texture loss'' defined in \textcite{ulyanov2016texture}.
+\item \textcite{ulyanov2016texture} proposes texture net, which solves the problem by
 \[\min E_{\mZ \sim p_0}\left[ T(f_\phi(\mZ)) \right] \]
 without considering entropy term.
 \item We compare our formulation with texture net. We use real-nvp \parencite{dinh2016density} as the normalizing flow structure
@@ -1018,11 +1020,98 @@ MEFN   & 17014 & 175604 & 161639 & 13964 \\
 \end{frame}
 
 \begin{frame}
-\frametitle{fLDS: AEVB form (backup)}
+\begin{center}
+\Large{Backup slides}
+\end{center}
 \end{frame}
 
 \begin{frame}
-\frametitle{MEFN: Normalizing flow structures (backup)}
+\frametitle{GCLDS: Supervised case, GCGLM}
+\begin{itemize}
+\item Given count data $x_i \in \mathbb{N}$, and associated covariates $z_i \in \mathbb{R}^p$, build Generalized Count Generalized Linear Model (GCGLM).
+\[x_i \sim \mathcal{GC}(\theta(z_i), g(\cdot)), ~~~~\text{where} ~~~ \theta(z_i) =  z_i \beta.\]
+\item Reminder: generalized count distribution
+\[p_{\mathcal{GC}}(x; \theta, g(\cdot)) \propto \frac{\exp(\theta \cdot x + g(x) )}{x!}, ~~~x \in \mathbb{N}\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{GCLDS: special cases of GCGLM}
+\begin{centering}
+{\scriptsize
+\begin{tabular}{ lll}
+\hline
+ \multicolumn{1}{c}{\bf Model Name} &  \multicolumn{1}{c}{\bf Typical Parameterization} &  \multicolumn{1}{c}{\bf GCGLM Parametrization} \\
+\hline
+\parbox{0.2\textwidth}{Logistic regression } & $\begin{aligned} P(x=k) = \frac{\exp\left(k (\alpha + z\beta)\right)}{1 + \exp(\alpha + x\beta)}  \end{aligned}$ & $\begin{aligned} g(k) = \alpha k; k = 0,1\end{aligned}$\\
+ \hline
+   \parbox{0.2\textwidth}{Poisson regression} & $\begin{aligned} P(x=k) =& \frac{\lambda^{k}}{k!}\exp(-\lambda);\\ \lambda =& \exp(\alpha + z\beta)\end{aligned}$& $\begin{aligned} g(k) = \alpha k \end{aligned}$\\
+  \hline
+
+  %Adjacent Category Regression & $\frac{P(y = k)}{P(y = k-1)} = \logit^{-1}(\alpha_k + x\beta); k = 1,...,K$ & $g(k) = \sum_{i = 1}^{k} (\alpha_{i} + \log i); k = 0,1,...,K$\\
+  \parbox{0.2\textwidth}{Adjacent category regression }  
+   & $\begin{aligned}\frac{P(x = k+1)}{P(x = k)} =& \exp(\alpha_k + z\beta)\end{aligned}$ & $\begin{aligned} g(k) =& \sum_{i = 1}^{k} (\alpha_{i - 1} + \log{i});\\ k =& 0,1,...,K \end{aligned}$\\
+    \hline
+%     Binomial Regression & $\begin{aligned}P(y=k) =& \binom{N}{K} p^k(1-p)^{N-k}\\ k =& 0,1,...,N\\ p =& \logit^{-1}(\alpha + x \beta)\end{aligned}$ & $\begin{aligned}g(k) =&
+%\alpha k + \sum\limits_{j = n - k +1}^n \log j;\\ k =& 0, 1,...,N \end{aligned}$\\
+%\hline
+  \parbox{0.2\textwidth}{Negative binomial regression}&  $\begin{aligned}P(x = k) =& \frac{(k+r-1)!}{k!(r-1)!}(1-p)^r p^k \\ p =& \exp (\alpha + z\beta) \end{aligned}$ & $\begin{aligned} g(k) =& \alpha k + \log{(k+r-1)!} \end{aligned}$\\
+\hline
+\parbox{0.2\textwidth}{COM-Poisson regression} & $\begin{aligned} P(x = k) =& \frac{\lambda^k}{(k!)^{\nu}} / \sum_{j=1}^{+\infty} \frac{\lambda^j}{(j!)^{\nu}} \\ \lambda =& \exp(\alpha + z \beta) \end{aligned}$ &
+$\begin{aligned} g(k) = \alpha k + (1-\nu) \log{k!} \end{aligned}$ \\
+%$\begin{aligned} &\text{Negative-binomial Regression}\\ &\text{(log link)} \end{aligned}$ & $E(Y) =   \exp (\alpha + x\beta)$ & Not Available\\
+  \hline
+\end{tabular}
+}
+\end{centering}
+\end{frame}
+
+\begin{frame}
+\frametitle{fLDS: AEVB form}
+\begin{itemize}
+\item Generative model, for a single trial:
+\[p_\theta(\vz | \vx) \propto \underbrace{p_\theta(\vz_{1})
+\prod_{t=1}^{T-1}p_\theta(\vz_{r(t+1)} | \vz_{rt})}_{Gaussian} 
+\underbrace{\prod_{t=1}^T p_\theta(\vx_{rt} | \vz_{rt})}_{\alert{Complicated}}
+\]
+%No analytical form, hard to sample.
+\item Recognition model, for a single trial:
+\[q_\phi(\vz | \vx) \propto \underbrace{q_\phi(\vz_{1}) 
+\prod_{t=1}^{T-1}q_\phi(\vz_{r(t+1)} - \tilde{A}\vz_{rt}) }_{Gaussian}
+\underbrace{\prod_{t=1}^T q_\phi(\vz_{rt} | \vx_{rt})}_{\alert{Gaussian}}
+\]
+Approximates a complicated factor with a Gaussian factor dependent on the data in a complicated way.
+\item Jointly Gaussian distribution with block tri-diagonal precision matrix.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{MEFN: Normalizing flow structures}
+\begin{itemize}
+\item \textcite{Rezende2015} Proposes two specific families of transformations for variational inference
+\item Planar flow%: cut the space by half and distort the relations
+\[f_i(\vz) = \vz + \vu_i h(\vw_i^{T} \vz+ b_i),\]
+where $b_i \in \mathbb{R}$, $\vu_i, \vw_i \in \mathbb{R}^d$ and $h$ is an activation function. %in the planar case
+\item Circular flow
+\[f_i(\vz) = \vz + \beta_i h(\alpha_i, r_i)(\vz - \vz'_i),\]
+$\beta_i \in \mathbb{R}$, $\alpha_i >0$, $\vz'_i \in \mathbb{R}^d$ , $h(\alpha,r)=1/(\alpha+r)$ and $r_i = ||\vz-\vz'_i||$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{MEFN: real-nvp normalizing flow structure}
+\begin{itemize}
+\item Used in \textcite{dinh2016density} for image denstiy estimation.
+\item Affine coupling layer: split variable $\vz \in \mathbb{R}^D$ into $\vz_1 \in \mathbb{R}^d$ and $\vz_2 \in \mathbb{R}^{D-d}$. linearly transform $\vz_2$ given $\vz_1$. 
+\[f\left(\begin{array}{c} \vz_1\\ \vz_2 \end{array} \right) = 
+\left(\begin{array}{c} \vz_1 \\ \vz_2 \odot \exp \left( s(\vz_1) \right) + t(\vz_1) \end{array}\right) \]
+where $\odot$ is element-wise product. $s(\vz_1), t(\vz_1): \mathbb{R}^d \rightarrow \mathbb{R}^{D-d}$.
+\item The transformation family is flexible because
+\begin{itemize}
+\item $s$ and $t$ can be complex while maintaining tractability (inversion and Jacobian computation). %without hurting the tractability of the Jacobian computation
+\item Partitioning $\vz$ into $(\vz_1, \vz_2)$ can be chosen arbitrarily.
+\end{itemize}
+\end{itemize}
 \end{frame}
 
 \end{document}
