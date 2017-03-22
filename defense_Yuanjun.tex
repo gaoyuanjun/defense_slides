@@ -493,8 +493,8 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
  &\text{   or }\mathcal{GC}(\alert{f}_i(\vz_{rt}), g_i(\cdot)) \text{ (GCfLDS)}%, i = 1,...,n
  \end{split}\]
  where $f_i$ is a nonlinear function parameterized by a neural network
- \item Linear dynamics: simple, tractable, interpretable
- \item Nonlinear observation: flexibility
+ \item Linear latent dynamics: simple, tractable, interpretable
+ \item Nonlinear observation: flexible
 \end{itemize}
 \end{frame}
 
@@ -677,12 +677,60 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \frametitle{Introduction: calcium imaging data}
 \begin{itemize}
 \item Basic principle: the \alert{spiking} activity of a neuron induce a transient increase in \alert{calcium concentration}, which can be indirectly observed by recording the \alert{fluorescent properties} of certain calcium indicators.
-\item Allows simultaneous recording from hundreds of thousands of neurons.
+%\item Allows simultaneous recording from hundreds of thousands of neurons.
 \end{itemize}
+\begin{center}
+{\scriptsize
+\begin{tabular}[t]{c}
+  Spike train (cartoon) \\
+\includegraphics[scale=0.4,clip = true]{figs/ROI_cartoon/fig_cartoon_spike_1.pdf}\\
+Calcium trace (cartoon) \\
+\includegraphics[scale=0.4,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_1.pdf}
+\end{tabular}
+}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Introduction: calcium imaging data}
+\begin{itemize}
+\item Calcium imaging enables \alert{simultaneous} recording of \alert{many} neurons.
+\end{itemize}
+%{\scriptsize
+\begin{tabular}[t]{ccccc}
+Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
+\hspace{-1cm}\begin{minipage}{0.2\textwidth}
+\begin{tabular}[t]{ccc}
+\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_1.pdf}&
+\hspace{-0.3cm}\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_2.pdf}&
+\hspace{-0.3cm}\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_3.pdf}
+\end{tabular}
+\end{minipage}
+&&
+\begin{minipage}{0.2\textwidth}
+%\begin{tabular}[t]{c}
+\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_1.pdf}\\
+\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_2.pdf}\\
+\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_3.pdf}
+%\end{tabular}
+\end{minipage}
+&&
+\begin{minipage}{0.06\textwidth}
+\begin{center}
+ \includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_frame_297.pdf}
+  \end{center}
+ \end{minipage}
+\end{tabular}
+\begin{itemize}
+\item \alert{Goal}: recover the neuron shape and calcium trace given the observation.
+\end{itemize}
+%}
+
 \end{frame}
 
 \begin{frame}
-\frametitle{Model formulation: idea}
+\frametitle{Model formulation}
 \begin{itemize}
 \item  $X \in \mathbb{R}^{N \times T}$ represents the calcium imaging data, where each column is a (vectorized) frame that contains $N$ pixels
 \item Decompose $X$ into a product of $K$ \alert{spatial component} and \alert{temporal component}% (neural acitivities)
@@ -711,7 +759,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \end{aligned}
 \]
 \item $\mathcal{D}_{w}^+$: non-negative vectors whose nonzero values is within a $w \times w$ window
-\item $f_D(D)$ regularizes the neuron shape (discussed later)
+\item $f_D(D)$ regularizes the neuron shape (will discuss later)
 \item $\|A_k\|_2 \leq c_k$ avoids degenerate solution
 \end{itemize}
 \end{frame}
@@ -720,12 +768,12 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{frame}
 \frametitle{Greedy algorithm}
 \begin{itemize}
-\item Scan the each frame of the video with a small Gaussian kernel
-\item At iteration $k$, given the current residue (unexplained by existing ROI)
+\item Identify ROIs one at a time, using the residual un-explained by existing signals.
+\item At iteration $k$, given the current residue (unexplained by existing ROIs)
 \begin{itemize}
 \item \alert{Greedy identification}: Identify the location $p_k$ where the Gaussian kernel explains most of the data (across time)
 \item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component
-\item \alert{Residue update}: Subtract the newly identified ROI
+\item \alert{Residue update}: Subtract the newly identified signal
 \end{itemize}
 \end{itemize}
 \end{frame}
@@ -755,7 +803,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item $f_2(D_k) = \sum_p (D_{kp} - G_{p_k})^2$ encourage Gaussian shape
 \item $f_3(D_k) = \sum_{\text{$p_1$ and $p_2$ are neighbors}} (D_{kp_1} - D_{kp_2})^2$ encourages smoothness
 \end{itemize}
-\item Optimize $D_k$ and $A_k$ by block coordinate descent
+\item Optimize by block coordinate descent
 %\item Need to tune regularization parameters, not necessarily good since those would shrink the estimated shape
 \end{itemize}
 %\end{itemize}
@@ -763,7 +811,11 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 
 \begin{frame}
 \frametitle{Real data analysis: sample patch, no shape regularization}
+{\small
 \begin{tabular}[t]{cc}
+\parbox{0.3\textwidth}{Mean image with fitted ROI locations}& Fitted ROI shape 
+\vspace{0.5cm}
+\\
 %\multicolumn{2}{c}{Gaussian kernel shape}  \\
 \includegraphics[scale=0.35,clip = true]{figs/ROI/fig_Misha_plain_comp.pdf}&
 \includegraphics[scale=0.35,clip = true]{figs/ROI/fig_Misha_plain_shape.pdf}\\
@@ -772,11 +824,17 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 %\includegraphics[scale=0.45,clip = true]{figs/fig_ROI/fig_simulation_shape_Ring.pdf}\\
 %\\
 \end{tabular}
+}
 \end{frame}
 
 \begin{frame}
 \frametitle{Real data analysis: sample patch, shape regularization}
+{\small
 \begin{tabular}[t]{cc}
+\parbox{0.3\textwidth}{Mean image with fitted ROI locations}& Fitted ROI shape 
+\vspace{0.5cm}
+\\
+
 %\multicolumn{2}{c}{Gaussian kernel shape}  \\
 \includegraphics[scale=0.35,clip = true]{figs/ROI/fig_Misha_smooth_comp.pdf}&
 \includegraphics[scale=0.35,clip = true]{figs/ROI/fig_Misha_smooth_shape.pdf}\\
@@ -785,6 +843,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 %\includegraphics[scale=0.45,clip = true]{figs/fig_ROI/fig_simulation_shape_Ring.pdf}\\
 %\\
 \end{tabular}
+}
 \end{frame}
 
 
@@ -793,9 +852,9 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{itemize}
 \item Summary
 \begin{itemize}
-\item Formulating calcium imaging ROI detection as a structure matrix factorization problem
-\item Greedy algorithm with shape regularization
-\item Fast ROI detection algorithm
+\item Formulating calcium imaging ROI detection as a structured matrix factorization problem
+\item Fast greedy algorithm
+%\item Fast ROI detection algorithm
 \end{itemize}
 \item Future work
 \begin{itemize}
