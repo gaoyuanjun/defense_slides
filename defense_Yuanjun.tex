@@ -517,34 +517,41 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item Decompose ELBO by trials
 \[\begin{split}
 \text{ELBO}(\theta, q) %=& \int \left[\log p_{\theta}(\vx, \vz) - \log q(\vz)\right] q(\vz) d\vz\\
-=& \sum_{r=1}^{R} \int \left[\log p_{\theta}(\vx_r, \vz_r) - \log q(\vz_r)\right] q(\vz_r) d\vz_r 
+=& \sum_{r=1}^{R} \int \left[\log \frac{p_{\theta}(\vx_r, \vz_r)}{q(\vz_r)}\right] q(\vz_r) d\vz_r 
 \end{split}\]
 \item Map data $\vx_r$ to $q(\vz_r)$ by a parameterized function
-\[q(\vz_r) = q_\phi(\vz_r; \vx_r) = \N\left(\mu_\phi(\vx_r), \Sigma_\phi(\vx_r)\right)\]
-\item Learn both $\theta$ and $\phi$ by optimizing ELBO
-\[\text{ELBO}(\theta, \phi) = \sum_{r=1}^{R} \int \left[\log p_{\theta}(\vx_r, \vz_r) - \log q_\phi(\vz_r; \vx_r)\right] q_\phi(\vz_r; \vx_r) d\vz_r \]
-\item Do stochastic optimization with gradient of a single trial
+\[q(\vz_r) = q_\phi(\vz_r | \vx_r) = \N\left(\mu_\phi(\vx_r), \Sigma_\phi(\vx_r)\right)\]
+\item Learn both $\theta$ and $\phi$ by \alert{stochastic} gradient descent on ELBO
+\[\begin{split}
+\grad\text{ELBO}(\theta, \phi) \approx& R \times \grad \int \left[\log \frac{p_{\theta}(\vx_r, \vz_r)}{q_\phi(\vz_r | \vx_r)}\right] q_\phi(\vz_r; \vx_r) d\vz_r\\
+\approx& R \times \text{an unbiased estimator of gradient} \\
+&\text{{\small \alert{(Reparameterization trick)}}}
+\end{split}\]
+%\item Do stochastic optimization with gradient of a single trial
 \end{itemize}
 \end{frame}
-
 
 \begin{frame}
-\frametitle{Inference algorithm: AEVB (important details)}
+\frametitle{Structure of the recognition model}
 \begin{itemize}
-\item Specific parameterization of the recognition model
-\[q(\vz_r) = q_\phi(\vz_r; \vx_r) = \N\left(\mu_\phi(\vx_r), \Sigma_\phi(\vx_r)\right)\]
-\vspace{-0.5cm}
-\begin{itemize}
-\item Block tri-diagonal precision matrix that agrees with Markovian structure
-\item Potentially useful to perform filtering in an online fashion
-\end{itemize}
-\item Reparameterization trick for stochastic optimization
-\begin{itemize}
-\item Easy implementation
-\item Low variance
-\end{itemize}
+\item Generative model:
+\[p_\theta(\vz_r | \vx_r) \propto \underbrace{p_\theta(\vz_{r1})
+\prod_{t=1}^{T-1}p_\theta(\vz_{t+1)} | \vz_{rt})}_{Gaussian} 
+\prod_{t=1}^T \underbrace{p_\theta(\vx_{rt} | \vz_{rt})}_{\alert{Complicated}}
+\]
+%No analytical form, hard to sample.
+\item Recognition model, product-of-Gaussian form:
+\[q_\phi(\vz_r | \vx_r) \propto \underbrace{q_\phi(\vz_{r1}) 
+\prod_{t=1}^{T-1}q_\phi(\vz_{r(t+1)} - \tilde{A}\vz_{rt}) }_{Gaussian}
+\prod_{t=1}^T \underbrace{q_\phi(\vz_{rt} | \vx_{rt})}_{\alert{Gaussian}}
+\]
+Approximates a complicated factor with a Gaussian factor dependent on the data in a complicated way.
+\item Jointly Gaussian distribution with block tri-diagonal precision matrix. Maintaining the Markovian structure.
 \end{itemize}
 \end{frame}
+
+
+
 
 \begin{frame}
 \frametitle{Experiments}
@@ -1179,5 +1186,24 @@ where $\odot$ is element-wise product. $s(\vz_1), t(\vz_1): \mathbb{R}^d \righta
 \end{frame}
 
 \end{document}
+
+\begin{frame}
+\frametitle{Inference algorithm: AEVB (important details)}
+\begin{itemize}
+\item Specific parameterization of the recognition model
+\[q(\vz_r) = q_\phi(\vz_r; \vx_r) = \N\left(\mu_\phi(\vx_r), \Sigma_\phi(\vx_r)\right)\]
+\vspace{-0.5cm}
+\begin{itemize}
+\item Block tri-diagonal precision matrix that agrees with Markovian structure
+\item Potentially useful to perform filtering in an online fashion
+\end{itemize}
+\item Reparameterization trick for stochastic optimization
+\begin{itemize}
+\item Easy implementation
+\item Low variance
+\end{itemize}
+\end{itemize}
+\end{frame}
+
 
 
