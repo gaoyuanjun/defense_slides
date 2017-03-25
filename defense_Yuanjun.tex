@@ -183,7 +183,7 @@
 \[p(\vx, \vz) = \underbrace{p(\vz_1)}_{\text{Initial distribution}} 
 \underbrace{\prod_{t=1}^{T-1}p(\vz_{t+1} | \vz_t)}_{\text{Transition model}} 
 \underbrace{\prod_{t=1}^T p(\vx_t | \vz_t)}_{\text{Observation model}}\]
-\item Interpretation of latent variables: Unobserved neuron, intension; Dynamical view of motor data %(TODO: elaborate this line)
+\item Interpretation of latent variables: Unobserved neuron, intention; Dynamical view of motor data %(TODO: elaborate this line)
 \end{itemize}
 \end{frame}
 
@@ -299,7 +299,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
  %\item Set $g_i(0) = 0$ without loss of generality;
  \item Set $g_i(k) = -\infty$ for $k > K$ to facilitate computation;
  \item Ridge penalty on the $2^{\text{nd}}$ difference of $g_i(\cdot)$ to avoid overfitting;
- \item Set $g_i(0) = 0$ without loss of generality.
+ %\item Set $g_i(0) = 0$ without loss of generality.
  \end{itemize}
  \end{itemize}
 \end{frame}
@@ -355,7 +355,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{center}
 \begin{tabular}{ cccc } 
  \hline
-  & Mean & Variance & \alert{Likelihood} \\
+  & Mean & \alert{Variance} & \alert{Likelihood} \\
  \hline
  PLDS & \cmark & \xmark& \xmark \\ 
  \alert{GCLDS} &\cmark &\cmark &\cmark \\ 
@@ -1137,24 +1137,7 @@ $\begin{aligned} g(k) = \alpha k + (1-\nu) \log{k!} \end{aligned}$ \\
 \frametitle{GCLDS: VBEM detail}
 \end{frame}
 
-\begin{frame}
-\frametitle{fLDS: AEVB form}
-\begin{itemize}
-\item Generative model, for a single trial:
-\[p_\theta(\vz | \vx) \propto \underbrace{p_\theta(\vz_{1})
-\prod_{t=1}^{T-1}p_\theta(\vz_{r(t+1)} | \vz_{rt})}_{Gaussian} 
-\underbrace{\prod_{t=1}^T p_\theta(\vx_{rt} | \vz_{rt})}_{\alert{Complicated}}
-\]
-%No analytical form, hard to sample.
-\item Recognition model, for a single trial:
-\[q_\phi(\vz | \vx) \propto \underbrace{q_\phi(\vz_{1}) 
-\prod_{t=1}^{T-1}q_\phi(\vz_{r(t+1)} - \tilde{A}\vz_{rt}) }_{Gaussian}
-\underbrace{\prod_{t=1}^T q_\phi(\vz_{rt} | \vx_{rt})}_{\alert{Gaussian}}
-\]
-Approximates a complicated factor with a Gaussian factor dependent on the data in a complicated way.
-\item Jointly Gaussian distribution with block tri-diagonal precision matrix.
-\end{itemize}
-\end{frame}
+
 
 \begin{frame}
 \frametitle{MEFN: Normalizing flow structures}
@@ -1186,6 +1169,26 @@ where $\odot$ is element-wise product. $s(\vz_1), t(\vz_1): \mathbb{R}^d \righta
 \end{frame}
 
 \end{document}
+
+%%%%%%%%%%%% deprecated slides %%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{fLDS: AEVB form}
+\begin{itemize}
+\item Generative model, for a single trial:
+\[p_\theta(\vz | \vx) \propto \underbrace{p_\theta(\vz_{1})
+\prod_{t=1}^{T-1}p_\theta(\vz_{r(t+1)} | \vz_{rt})}_{Gaussian} 
+\underbrace{\prod_{t=1}^T p_\theta(\vx_{rt} | \vz_{rt})}_{\alert{Complicated}}
+\]
+%No analytical form, hard to sample.
+\item Recognition model, for a single trial:
+\[q_\phi(\vz | \vx) \propto \underbrace{q_\phi(\vz_{1}) 
+\prod_{t=1}^{T-1}q_\phi(\vz_{r(t+1)} - \tilde{A}\vz_{rt}) }_{Gaussian}
+\underbrace{\prod_{t=1}^T q_\phi(\vz_{rt} | \vx_{rt})}_{\alert{Gaussian}}
+\]
+Approximates a complicated factor with a Gaussian factor dependent on the data in a complicated way.
+\item Jointly Gaussian distribution with block tri-diagonal precision matrix.
+\end{itemize}
+\end{frame}
 
 \begin{frame}
 \frametitle{Inference algorithm: AEVB (important details)}
