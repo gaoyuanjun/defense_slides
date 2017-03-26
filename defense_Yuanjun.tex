@@ -183,7 +183,7 @@
 \[p(\vx, \vz) = \underbrace{p(\vz_1)}_{\text{Initial distribution}} 
 \underbrace{\prod_{t=1}^{T-1}p(\vz_{t+1} | \vz_t)}_{\text{Transition model}} 
 \underbrace{\prod_{t=1}^T p(\vx_t | \vz_t)}_{\text{Observation model}}\]
-\item Interpretation of latent variables: Unobserved neuron, intention; Dynamical view of motor data %(TODO: elaborate this line)
+%\item Interpretation of latent variables: Unobserved neuron, intention; Dynamical view of motor data %(TODO: elaborate this line)
 \end{itemize}
 \end{frame}
 
@@ -264,7 +264,7 @@
 \[\left. \begin{array}{ll} \vz &\sim p(\vz) \\ \vx &\sim \text{Poisson}(f(\vz)) \end{array} \right\} \Rightarrow 
 \begin{array}{ll} \text{var}(\vx | \vz) &= E(\vx | \vz) \\ \text{var}(\vx) &\geq E(\vx)  \end{array}\]
 \item Need a more flexible distribution to separate \alert{firing rate variability} with \alert{noise variability}.
-\[\text{var}(\vx) = \underbrace{\text{var}\left(E(\vx | \vz)\right)}_\text{firing rate variability} + \underbrace{\text{var}\left(\vx  - E(\vx | \vz)\right)}_\text{noise variability}\]
+\[\text{var}(\vx) = \underbrace{\text{var}\left(E(\vx | \vz)\right)}_\text{firing rate variability} + \underbrace{E\left(\text{var}(\vx | \vz)\right)}_\text{noise variability}\]
 \end{itemize}
 \end{frame}
 
