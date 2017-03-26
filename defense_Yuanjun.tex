@@ -261,9 +261,10 @@
 \begin{itemize}
 \item Doubly stochastic Poisson model implies \alert{overdispersion}
 %\[ \vx \sim \text{Poisson}(f(\vz))  , \vz \sim p(\vz) \rightarrow \text{var}(\vx) \geq E(\vx)\]
-\[\left. \begin{array}{ll} \vz &\sim p(\vz) \\ \vx &\sim \text{Poisson}(f(\vz)) \end{array} \right\} \Rightarrow \alert{\text{var}(\vx) \geq E(\vx)}\]
+\[\left. \begin{array}{ll} \vz &\sim p(\vz) \\ \vx &\sim \text{Poisson}(f(\vz)) \end{array} \right\} \Rightarrow 
+\begin{array}{ll} \text{var}(\vx | \vz) &= E(\vx | \vz) \\ \text{var}(\vx) &\geq E(\vx)  \end{array}\]
 \item Need a more flexible distribution to separate \alert{firing rate variability} with \alert{noise variability}.
-\[\text{var}(\vx) = \underbrace{\text{var}\left(E(\vx | \vz)\right)}_\text{firing rate variability} + \underbrace{E\left(\text{var}(\vx | \vz)\right)}_\text{noise variability}\]
+\[\text{var}(\vx) = \underbrace{\text{var}\left(E(\vx | \vz)\right)}_\text{firing rate variability} + \underbrace{\text{var}\left(\vx  - E(\vx | \vz)\right)}_\text{noise variability}\]
 \end{itemize}
 \end{frame}
 
@@ -504,9 +505,10 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 %\item Auto-encoding Variational Bayes (AEVB)
 \begin{itemize}
 \item Auto-encoding Variational Bayes (AEVB)
-\item Learn a mapping (recognition model) from data to the \alert{approximate posterior distribution of latent variable}.
+\item Learn a mapping (recognition model) from data to the \alert{approximate posterior distribution of latent variable}. 
 \item Jointly optimize the generative model parameters and recognition model parameters.
 \item Naturally incorporate stochastic optimization to handle large datasets.
+\item Tractable for a large class of graphical models
 \end{itemize}
 %\end{itemize}
 \end{frame}
@@ -523,7 +525,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \[q(\vz_r) = q_\phi(\vz_r | \vx_r) = \N\left(\mu_\phi(\vx_r), \Sigma_\phi(\vx_r)\right)\]
 \item Learn both $\theta$ and $\phi$ by \alert{stochastic} gradient descent on ELBO
 \[\begin{split}
-\grad\text{ELBO}(\theta, \phi) \approx& R \times \grad \int \left[\log \frac{p_{\theta}(\vx_r, \vz_r)}{q_\phi(\vz_r | \vx_r)}\right] q_\phi(\vz_r; \vx_r) d\vz_r\\
+\grad\text{ELBO}(\theta, q_\phi) \approx& R \times \grad \int \left[\log \frac{p_{\theta}(\vx_r, \vz_r)}{q_\phi(\vz_r | \vx_r)}\right] q_\phi(\vz_r| \vx_r) d\vz_r\\
 \approx& R \times \text{an unbiased estimator of gradient} \\
 &\text{{\small \alert{(Reparameterization trick)}}}
 \end{split}\]
@@ -536,7 +538,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{itemize}
 \item Generative model:
 \[p_\theta(\vz_r | \vx_r) \propto \underbrace{p_\theta(\vz_{r1})
-\prod_{t=1}^{T-1}p_\theta(\vz_{t+1)} | \vz_{rt})}_{Gaussian} 
+\prod_{t=1}^{T-1}p_\theta(\vz_{t(t+1)} | \vz_{rt})}_{Gaussian} 
 \prod_{t=1}^T \underbrace{p_\theta(\vx_{rt} | \vz_{rt})}_{\alert{Complicated}}
 \]
 %No analytical form, hard to sample.
