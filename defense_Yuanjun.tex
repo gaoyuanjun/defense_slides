@@ -753,12 +753,12 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \begin{frame}
 \frametitle{Model formulation}
 \begin{itemize}
-\item  $X \in \mathbb{R}^{N \times T}$ represents the calcium imaging data, where each column is a (vectorized) frame that contains $N$ pixels
-\item Decompose $X$ into a product of $K$ \alert{spatial component} and \alert{temporal component}% (neural acitivities)
+\item  $X \in \mathbb{R}^{d \times T}$ represents the calcium imaging data, where each column is a (vectorized) frame that contains $d$ pixels
+\item Decompose $X$ into a product of $n$ \alert{spatial component} and \alert{temporal component}% (neural acitivities)
 \[X = D A^T + \text{noise}\]
 \begin{itemize}
-\item $D = [D_1,...,D_K] \in \mathbb{R}^{N \times K}$ represents the neuron shapes
-\item $A = [A_1,...,A_K] \in \mathbb{R}^{T \times K}$ is the neural activities%, $K$ is the number of neurons.
+\item $D = [D_1,...,D_n] \in \mathbb{R}^{d \times n}$ represents the neuron shapes
+\item $A = [A_1,...,A_n] \in \mathbb{R}^{T \times n}$ is the neural activities%, $K$ is the number of neurons.
 \end{itemize}
 \item Further exploit structure of the components (localized neuron shapes)
 \end{itemize}
@@ -774,14 +774,14 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 & \underset{D, A}{\text{minimize}}
 & & \| X - D A^T \|_2^2 + f_D(D), \\
 & \text{subject to}
-& & D_k \in \mathcal{D}_{w}^+; k = 1, \ldots, K,\\
+& & D_i \in \mathcal{D}_{w}^+; i = 1, \ldots, n,\\
 & 
-& & \|A_k\|_2 \leq c_k,
+& & \|A_i\|_2 \leq c_i,
 \end{aligned}
 \]
 \item $\mathcal{D}_{w}^+$: non-negative vectors whose nonzero values is within a $w \times w$ window
 \item $f_D(D)$ regularizes the neuron shape (will discuss later)
-\item $\|A_k\|_2 \leq c_k$ avoids degenerate solution
+\item $\|A_i\|_2 \leq c_i$ avoids degenerate solution
 \end{itemize}
 \end{frame}
 
@@ -790,11 +790,11 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \frametitle{Greedy algorithm}
 \begin{itemize}
 \item Identify ROIs one at a time, using the residual un-explained by existing signals.
-\item At iteration $k$, given the current residue (unexplained by existing ROIs)
+\item At iteration $i$, given the current residue (unexplained by existing ROIs)
 \begin{itemize}
-\item \alert{Greedy identification}: Identify the location $p_k$ where the Gaussian kernel explains most of the data (across time)
-\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component
-\item \alert{Residue update}: Subtract the newly identified signal
+\item \alert{Greedy identification}: Identify the location $p_i$ where the Gaussian kernel explains the largest variance of the current residue across time.
+\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component.
+\item \alert{Residue update}: Subtract the newly identified signal.
 \end{itemize}
 \end{itemize}
 \end{frame}
@@ -803,32 +803,33 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \begin{frame}
 \frametitle{Shape fine tuning}
 \begin{itemize}
-\item Given current residue $R$, an identified center pixel $p_k$, denote $S_k$ as a $w \times w$ window centered at $p_k$
+\item Given current residue $R$, an identified center pixel $p_i$, denote $S_i$ as a $w \times w$ window centered at $p_i$
 \[
 \begin{aligned}
-& \underset{D_k, A_k}{\text{minimize}}
-& & \| R - D_k A_k^T \|^2 + f(D_k), \\%\sum_{i = 1}^3 \lambda_i f_i(D_k),\\
+& \underset{D_i, A_i}{\text{minimize}}
+& & \| R - D_i A_i^T \|^2 + f(D_i), \\%\sum_{i = 1}^3 \lambda_i f_i(D_k),\\
 & \text{subject to}
-& & D_{kp} \geq 0, p \in S_k,\\
+& & D_{ip} \geq 0, p \in S_i,\\
 &
-& & D_{kp} = 0, p \notin S_k,\\
+& & D_{ip} = 0, p \notin S_i,\\
 & 
-& & \|A_k\|_2 \leq c_k,
+& & \|A_i\|_2 \leq c_i,
 \end{aligned}
 \]
 %\begin{itemize}
-\item $f(D_k) = \sum_{i=1}^3 \lambda_i f_i(D_k)$
+\item $f(D_i) = \lambda_1 f_1(D_i) +  \lambda_2 f_2(D_i) +  \lambda_3 f_3(D_i)$
 %where
 \begin{itemize}
-\item $f_1(D_k) = \sum_p \tau_{(p, p_k)} | D_{kp} |$ encourages sparsity
-\item $f_2(D_k) = \sum_p (D_{kp} - G_{p_k})^2$ encourages Gaussian shape
-\item $f_3(D_k) = \sum_{\text{$p_1$ and $p_2$ are neighbors}} (D_{kp_1} - D_{kp_2})^2$ encourages smoothness
+\item $f_1(D_i) = \sum_p \tau_{(p, p_i)} | D_{ip} |$ encourages sparsity
+\item $f_2(D_i) = \sum_p (D_{ip} - G_{p_i})^2$ encourages Gaussian shape
+\item $f_3(D_i) = \sum_{\text{$p_1$ and $p_2$ are neighbors}} (D_{ip_1} - D_{ip_2})^2$ encourages smoothness
 \end{itemize}
-\item Optimize by block coordinate descent
+\item Block coordinate descent
 %\item Need to tune regularization parameters, not necessarily good since those would shrink the estimated shape
 \end{itemize}
 %\end{itemize}
 \end{frame}
+
 
 \begin{frame}
 \frametitle{Real data analysis: sample patch, no shape regularization}
@@ -1031,7 +1032,7 @@ where $\vz^{(i)} \sim p_0$. We can then optimize the objective by stochastic gra
 \end{frame}
 
 \begin{frame}
-\frametitle{Experiment: Texture modeling}
+\frametitle{Experiment: Texture modeling (result)}
 \centering
 {\scriptsize
 \begin{tabular}[t]{ccc}
@@ -1253,4 +1254,84 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \end{itemize}
 \end{frame}
 
+%%%%%%% OLD calcium ROI
+\begin{frame}
+\frametitle{Model formulation}
+\begin{itemize}
+\item  $X \in \mathbb{R}^{N \times T}$ represents the calcium imaging data, where each column is a (vectorized) frame that contains $N$ pixels
+\item Decompose $X$ into a product of $K$ \alert{spatial component} and \alert{temporal component}% (neural acitivities)
+\[X = D A^T + \text{noise}\]
+\begin{itemize}
+\item $D = [D_1,...,D_K] \in \mathbb{R}^{N \times K}$ represents the neuron shapes
+\item $A = [A_1,...,A_K] \in \mathbb{R}^{T \times K}$ is the neural activities%, $K$ is the number of neurons.
+\end{itemize}
+\item Further exploit structure of the components (localized neuron shapes)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Model formulation: objective}
+\begin{itemize}
+\item Structured matrix factorization
+\[
+%\label{equ:opt}
+\begin{aligned}
+& \underset{D, A}{\text{minimize}}
+& & \| X - D A^T \|_2^2 + f_D(D), \\
+& \text{subject to}
+& & D_k \in \mathcal{D}_{w}^+; k = 1, \ldots, K,\\
+& 
+& & \|A_k\|_2 \leq c_k,
+\end{aligned}
+\]
+\item $\mathcal{D}_{w}^+$: non-negative vectors whose nonzero values is within a $w \times w$ window
+\item $f_D(D)$ regularizes the neuron shape (will discuss later)
+\item $\|A_k\|_2 \leq c_k$ avoids degenerate solution
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Greedy algorithm}
+\begin{itemize}
+\item Identify ROIs one at a time, using the residual un-explained by existing signals.
+\item At iteration $k$, given the current residue (unexplained by existing ROIs)
+\begin{itemize}
+\item \alert{Greedy identification}: Identify the location $p_k$ where the Gaussian kernel explains most of the data (across time)
+\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component
+\item \alert{Residue update}: Subtract the newly identified signal
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Shape fine tuning}
+\begin{itemize}
+\item Given current residue $R$, an identified center pixel $p_k$, denote $S_k$ as a $w \times w$ window centered at $p_k$
+\[
+\begin{aligned}
+& \underset{D_k, A_k}{\text{minimize}}
+& & \| R - D_k A_k^T \|^2 + f(D_k), \\%\sum_{i = 1}^3 \lambda_i f_i(D_k),\\
+& \text{subject to}
+& & D_{kp} \geq 0, p \in S_k,\\
+&
+& & D_{kp} = 0, p \notin S_k,\\
+& 
+& & \|A_k\|_2 \leq c_k,
+\end{aligned}
+\]
+%\begin{itemize}
+\item $f(D_k) = \sum_{i=1}^3 \lambda_i f_i(D_k)$
+%where
+\begin{itemize}
+\item $f_1(D_k) = \sum_p \tau_{(p, p_k)} | D_{kp} |$ encourages sparsity
+\item $f_2(D_k) = \sum_p (D_{kp} - G_{p_k})^2$ encourages Gaussian shape
+\item $f_3(D_k) = \sum_{\text{$p_1$ and $p_2$ are neighbors}} (D_{kp_1} - D_{kp_2})^2$ encourages smoothness
+\end{itemize}
+\item Optimize by block coordinate descent
+%\item Need to tune regularization parameters, not necessarily good since those would shrink the estimated shape
+\end{itemize}
+%\end{itemize}
+\end{frame}
 
