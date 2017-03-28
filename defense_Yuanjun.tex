@@ -76,7 +76,10 @@
 
 
 %%%%%%%%%%%%%%%%%%%%%%%% Overview %%%%%%%%%%%%%%%%%%
+
+
 \begin{frame}
+%% TODO: shorten things
 \frametitle{Overview}
 \centering
 \includegraphics[width = 0.50\textwidth]{./figs/gclds/fig_monkey.png}
@@ -157,9 +160,9 @@
   \node[main, fill = white!100] (z1) [] { $\vz_{t-1}$};
   \node[main] (z2) [right=of z1] {$\vz_{t}$ };
   \node[main] (z3) [right=of z2] {$\vz_{t+1}$};
-  \node[main, fill = black!10] (x1) [above=of z1] { $\vx_{t-1}$};
-  \node[main, fill = black!10] (x2) [above=of z2] {$\vx_{t}$ };
-  \node[main, fill = black!10] (x3) [above=of z3] {$\vx_{t+1}$};
+  \node[main, fill = blue!20] (x1) [above=of z1] { $\vx_{t-1}$};
+  \node[main, fill = blue!20] (x2) [above=of z2] {$\vx_{t}$ };
+  \node[main, fill = blue!20] (x3) [above=of z3] {$\vx_{t+1}$};
   \node (z0) [left=of z1] {$\cdots$};
   \node (zT) [right=of z3] {$\cdots$};
   \path (z1) edge [connect] (z2)
@@ -200,9 +203,9 @@
   \node[main, fill = white!100] (z1) [] { $\vz_{r(t-1)}$};
   \node[main] (z2) [right=of z1] {$\vz_{rt}$ };
   \node[main] (z3) [right=of z2] {$\vz_{r(t+1)}$};
-  \node[main, fill = black!10] (x1) [above=of z1] { $\vx_{r(t-1)}$};
-  \node[main, fill = black!10] (x2) [above=of z2] {$\vx_{rt}$ };
-  \node[main, fill = black!10] (x3) [above=of z3] {$\vx_{r(t+1)}$};
+  \node[main, fill = blue!20] (x1) [above=of z1] { $\vx_{r(t-1)}$};
+  \node[main, fill = blue!20] (x2) [above=of z2] {$\vx_{rt}$ };
+  \node[main, fill = blue!20] (x3) [above=of z3] {$\vx_{r(t+1)}$};
   \node (z0) [left=of z1] {$\cdots$};
   \node (zT) [right=of z3] {$\cdots$};
   \path (z1) edge [connect] (z2)
@@ -287,6 +290,14 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 
 
 \begin{frame}
+\frametitle{Generalized count distribution family}
+\begin{center}
+\includegraphics[width = 0.60\textwidth]{./figs/gclds/fig_var_GPoiss.pdf}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
 \frametitle{Model formulation}
  \begin{itemize}
  \item Linear dynamical systems with generalized count observation 
@@ -299,7 +310,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
  \begin{itemize}
  %\item Set $g_i(0) = 0$ without loss of generality;
  \item Set $g_i(k) = -\infty$ for $k > K$ to facilitate computation;
- \item Ridge penalty on the $2^{\text{nd}}$ difference of $g_i(\cdot)$ to avoid overfitting;
+ \item Ridge penalty on the $2^{\text{nd}}$ difference of $g_i(\cdot)$ to avoid overfitting; $\text{penalty} = \lambda \sum_{k=1}^{K-1} (g_i(k-1) - 2 g_i(k) + g_i(k+1))^2$.
  %\item Set $g_i(0) = 0$ without loss of generality.
  \end{itemize}
  \end{itemize}
@@ -448,7 +459,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{itemize}
 \item Incorporated generalized count family into state space models.
 \item Developed VBEM algorithm.
-\item Observed superior fitted result on real neural data.
+\item Observed superior fitted results on real neural data.
 \end{itemize}
 \item Extensions
 \begin{itemize}
@@ -467,19 +478,20 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 
 \begin{frame}
 \frametitle{Motivation}
-\begin{tabular}{cl}
-\parbox{0.6\textwidth}{
+% TODO: Explain this data better? Or not using this figure?
+%\begin{tabular}{cl}
+%\parbox{0.6\textwidth}{
 \begin{itemize}
 \item Neural activities lie in a low-dimensional \alert{nonlinear manifold} rather than a \alert{linear subspace}
 \item Flexible observation model makes the state space model more expressive
 \end{itemize}
-}
-&
-\hspace{-1cm}
-\begin{tabular}{c}
-\includegraphics[scale=0.5,clip = true]{figs/flds/fig_V1_single_3concat_onlyobservation.pdf}
-\end{tabular}
-\end{tabular}
+%}
+%&
+%\hspace{-1cm}
+%\begin{tabular}{c}
+%\includegraphics[scale=0.5,clip = true]{figs/flds/fig_V1_single_3concat_onlyobservation.pdf}
+%\end{tabular}
+%\end{tabular}
 \end{frame}
 
 
@@ -526,8 +538,8 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item Learn both $\theta$ and $\phi$ by \alert{stochastic} gradient descent on ELBO
 \[\begin{split}
 \grad\text{ELBO}(\theta, q_\phi) \approx& R \times \grad \int \left[\log \frac{p_{\theta}(\vx_r, \vz_r)}{q_\phi(\vz_r | \vx_r)}\right] q_\phi(\vz_r| \vx_r) d\vz_r\\
-\approx& R \times \text{an unbiased estimator of gradient} \\
-&\text{{\small \alert{(Reparameterization trick)}}}
+\approx& R \times \text{an unbiased estimator of gradient} %\\
+%&\text{{\small \alert{(Reparameterization trick)}}}
 \end{split}\]
 %\item Do stochastic optimization with gradient of a single trial
 \end{itemize}
@@ -666,7 +678,7 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \begin{itemize}
 \item Incorporated nonlinear observation into state space models.
 \item Developed AEVB algorithm (flexible and scalable).
-\item Obtain concise latent representation.
+\item Obtained concise latent representations.
 \end{itemize}
 \item Future work
 \begin{itemize}
@@ -685,7 +697,7 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \begin{frame}
 \frametitle{Introduction: calcium imaging data}
 \begin{itemize}
-\item Basic principle: the \alert{spiking} activity of a neuron induce a transient increase in \alert{calcium concentration}, which can be indirectly observed by recording the \alert{fluorescent properties} of certain calcium indicators.
+\item Basic principle: the \alert{spiking} activity of a neuron induces a transient increase in \alert{calcium concentration}, which can be indirectly observed by recording the \alert{fluorescent properties} of certain calcium indicators.
 %\item Allows simultaneous recording from hundreds of thousands of neurons.
 \end{itemize}
 \begin{center}
@@ -743,7 +755,7 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \begin{itemize}
 \item  $X \in \mathbb{R}^{N \times T}$ represents the calcium imaging data, where each column is a (vectorized) frame that contains $N$ pixels
 \item Decompose $X$ into a product of $K$ \alert{spatial component} and \alert{temporal component}% (neural acitivities)
-\[X = D \cdot A^T + \text{noise}\]
+\[X = D A^T + \text{noise}\]
 \begin{itemize}
 \item $D = [D_1,...,D_K] \in \mathbb{R}^{N \times K}$ represents the neuron shapes
 \item $A = [A_1,...,A_K] \in \mathbb{R}^{T \times K}$ is the neural activities%, $K$ is the number of neurons.
@@ -809,7 +821,7 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 %where
 \begin{itemize}
 \item $f_1(D_k) = \sum_p \tau_{(p, p_k)} | D_{kp} |$ encourages sparsity
-\item $f_2(D_k) = \sum_p (D_{kp} - G_{p_k})^2$ encourage Gaussian shape
+\item $f_2(D_k) = \sum_p (D_{kp} - G_{p_k})^2$ encourages Gaussian shape
 \item $f_3(D_k) = \sum_{\text{$p_1$ and $p_2$ are neighbors}} (D_{kp_1} - D_{kp_2})^2$ encourages smoothness
 \end{itemize}
 \item Optimize by block coordinate descent
@@ -884,9 +896,20 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \frametitle{Maximum entropy principle}
 \begin{itemize}
 \item \alert{Entropy}: for a continuous distribution with density $p(\vz)$ where $\vz \in \mathbb{R}^d$, the entropy is defined as
-\[H(p) = - \int p(\vz) \log p(\vz)  d \vz = E_{Z \sim p} \left[ -\log p(Z) \right].\]
+\[H(p) = - \int p(\vz) \log p(\vz)  d \vz = E_{\mZ \sim p} \left[ -\log p(\mZ) \right].\]
 A popular measure of diversity or information content.
-\item \alert{Maximum entropy (ME) principle}: Subject to some given prior knowledge (moment or support constraints), the distribution that makes \alert{minimal additional assumptions} is that which has the \alert{largest entropy} of any distribution obeying those constraints
+\item \alert{Maximum entropy (ME) principle}: Subject to some given prior knowledge, the distribution that makes \alert{minimal additional assumptions} is that which has the \alert{largest entropy} of any distribution obeying those constraints
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Applications of maximum entropy}
+\begin{itemize}
+\item \alert{Neuroscience}: generate a distribution of neural activity by specifying a set of features (pairwise correlation etc.) for hypothesis testing.
+\item \alert{Texture modeling}: generate an image with a certain texture by specifying expected value of features relevant to texture.
+%\item \alert{Ecology}: Fit species distribution with certain feature constraints (altitude, temperature etc.).
+%\item \alert{Finance}: Fit the risk-neutral distribution of an asset given a list of option prices.
+\item Ecology, natural language processing, finance...
 \end{itemize}
 \end{frame}
 
@@ -907,25 +930,14 @@ where $T(\vz) = (T_1(\vz),...,T_m(\vz)):\mathcal{Z}\rightarrow \mathbb{R}^{m}$ i
 \end{frame}
 
 \begin{frame}
-\frametitle{Applications of maximum entropy}
-\begin{itemize}
-\item \alert{Texture modeling}: generate an image with a certain texture by specifying expected value of features relevant to texture.
-\item \alert{Neuroscience}: generate a distribution of neural activity by specifying a set of features (pairwise correlation etc.) for hypothesis testing.
-\item \alert{Ecology}: Fit species distribution with certain feature constraints (altitude, temperature etc.).
-\item \alert{Finance}: Fit the risk-neutral distribution of an asset given a list of option prices.
-\item ...
-\end{itemize}
-\end{frame}
-
-\begin{frame}
 \frametitle{Gibbs distribution}
 \begin{itemize}
-\item Under standard regularity conditions, the maximum entropy problem can be solved by Lagrange multipliers, yielding an exponential family $p^*$ of the form (Gibbs distribution):
+\item Lagrange multipliers argument $\Rightarrow$ an exponential family form for ME distribution (Gibbs distribution):
 \[\label{curmet}
 p^*(\vz) \propto e^{<\eta, T(\vz)>} \mathbbm{1}(\vz \in \mathcal{Z})
 \]
-\item Identifying $\eta \in \mathbb{R}^m$ can be hard in high-dimensional setting.
-\item Sampling from the distribution can be hard. MCMC methods can take long to mix.
+\item Hard to Identify $\eta \in \mathbb{R}^m$.
+\item Hard to sample from the distribution.
 \item \alert{Question}: is there a better way to do this?
 \end{itemize}
 \end{frame}
@@ -935,15 +947,25 @@ p^*(\vz) \propto e^{<\eta, T(\vz)>} \mathbbm{1}(\vz \in \mathcal{Z})
 \frametitle{Idea: normalizing flow}
 \begin{itemize}
 \item Considering a family of smooth and invertible transformation (\alert{normalizing flow}) \[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}\]
+\item Transform a simple distribution $Z_0 \sim p_0$ to a complicated one $Z = f_\phi(Z_0) \sim p_\phi$ by \alert{change-of-variable theorem}.
+\[p_\phi(\vz) = p_0\left( f_\phi^{-1}(\vz) \right) | \det \left(J_\phi (\vz)\right) |^{-1}\]
+\item Constructing a flexible family of normalizing flow by composing simple normalizing flows (\alert{deep learning})
+\[\mZ = f_{k}\circ f_{k-1}\circ\dots \circ f_{1}(\mZ_{0})\]
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Maximum entropy flow network (MEFN)}
+\begin{itemize}
 \item Identify a transformation $f_{\phi^*} \in \mathcal{F}$ that transforms a simple distribution $p_0$ to approximate the maximum entropy distribution.
 \begin{eqnarray*}\label{optobj}
 %\substack{E_{\mZ\sim p}[T(\mZ)]=0 \\ \supp(p)=\mathcal{X}}
 \phi^{*} &=& \text{maximize}~~~ H(p_\phi) \\
-&& \text{subject to} ~~~E_{\mZ_0\sim p_0}[T(f_\phi(\mZ_{0}))]=0 \nonumber\\
+&& \text{subject to} ~~~R(\phi) = E_{\mZ_0\sim p_0}[T(f_\phi(\mZ_{0}))]=0 \nonumber\\
 && ~~~~~~~~~~~~~~~~~~\supp(p_\phi)=\mathcal{Z}. \nonumber
 \end{eqnarray*}
-where $p_\phi(\vz)$ is the distribution of $f_\phi(Z_0)$ for $Z_0 \sim p_0$.
-\[p_\phi(\vz) = p_0( f_\phi^{-1}(\vz) ) | \det (J_\phi (\vz)) |^{-1}\]
+where $p_\phi$ is the distribution of $f_\phi(\mZ_0)$ for $\mZ_0 \sim p_0$.
+%\[p_\phi(\vz) = p_0( f_\phi^{-1}(\vz) ) | \det (J_\phi (\vz)) |^{-1}\]
 \end{itemize}
 \end{frame}
 
@@ -951,10 +973,13 @@ where $p_\phi(\vz)$ is the distribution of $f_\phi(Z_0)$ for $Z_0 \sim p_0$.
 \begin{frame}
 \frametitle{Augmented Lagrangian method}
 \begin{itemize}
-\item Denote $R(\phi) = E\left(T(f_\phi( \mZ_0))\right) \in \mathbb{R}^m$, augmented Lagrangian method minimizes the objective
+\item Augmented Lagrangian method minimizes the objective
 \[L(\phi; \lambda, c) = - H(p_\phi) + \lambda^{\top} R(\phi) + \dfrac{c}{2}||R(\phi)||^2\]
 for a sequence of $\lambda \in \mathbb{R}^m$ and $c \geq 0$.
-\item Update rule: at iteration $k$, given $\lambda_k$ and $c_k$, suppose $\phi_k$ optimizes $L(\phi; \lambda_k, c_k)$, update $\lambda$ and $c$ by
+\item Update rule: at iteration $k$, given $\lambda_k$ and $c_k$.
+\begin{itemize}
+\item Find $\phi_k$ that optimizes $L(\phi; \lambda_k, c_k)$
+\item Update $\lambda$ and $c$ by
 \[\begin{split}
 \lambda_{k+1} =& \lambda_k + c_k R(\phi_k)\\
 c_{k+1} =&\begin{cases}
@@ -964,45 +989,44 @@ c_k & \text{otherwise}
 \end{split}\]
 for some $\gamma \in (0,1)$, $\beta > 1$
 \end{itemize}
+\end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Augmented Lagrangian method in stochastic setting}
 \begin{itemize}
-\item Denote $R(\phi) = E\left(T(f_\phi( \mZ_0))\right) \in \mathbb{R}^m$, augmented Lagrangian method minimizes the objective
-\[L(\phi; \lambda, c) = - H(p_\phi) + \lambda^{\top} R(\phi) + \dfrac{c}{2}||R(\phi)||^2\]
-for a sequence of $\lambda \in \mathbb{R}^m$ and $c \geq 0$.
-\item Here $R(\phi) = E\left(T(f_\phi( \mZ_0))\right) \in \mathbb{R}^m$ is intractable, but we can approximate with a sampled version.
-\[R(\phi) \approx \frac{1}{n} \sum_{i=1}^nT(f_\phi( \vz^{(i)})), \vz^{(i)} \sim p_0\]
-We can then optimize the objective by stochastic gradient descent.
+\item Both $H(p_\phi)$ and $R(\phi)$ are intractable, but we can approximate with an unbiased estimation,
+\[\begin{split}
+H(p_\phi) \approx& \frac{1}{n} \sum_{i=1}^n -\log p_\phi(\vz^{(i)}),\\
+R(\phi) \approx& \frac{1}{n} \sum_{i=1}^nT(f_\phi( \vz^{(i)})),
+\end{split}\]
+where $\vz^{(i)} \sim p_0$. We can then optimize the objective by stochastic gradient descent.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Experiment: Dirichlet}
+\frametitle{Texture modeling (overview)}
 \begin{itemize}
-\item Dirichlet distribution is the ME distribution on a simplex $\mathcal{S}=\{\vz = (z_1,\dots,z_{d-1}):z_i\geq 0\text{ and }\sum_{k=1}^{d-1}z_k\leq 1\}$ with expetation on the log of each coordinate $E[\log Z_k] = \kappa_k (k = 1,...,d)$, where $Z_d = 1 - \sum_{k=1}^{d-1} Z_k$.
-\item $10$ layers of planar flow \parencite{Rezende2015}.
+\item Goal: construct a distribution on images that mimics a given texture (from a training image).
+\begin{itemize}
+\item Authenticity: the samples from the distribution should mimic the given texture (constraints).
+\item Sample diversity: the distribution should generate a variety of images with certain texture (entropy).
 \end{itemize}
-\begin{tabular}[t]{ccc}
-\vspace{-0cm}
-\includegraphics[scale=0.3,clip = true, trim=1cm 1.5cm 1cm 1.5cm]{figs/MEFN/normal_contours.pdf}&
-\includegraphics[scale=0.3,clip = true, trim=1cm 1.5cm 1cm 1.5cm]{figs/MEFN/network_contours_moments.pdf}&
-\includegraphics[scale=0.3,clip = true, trim=1cm 1.5cm 1cm 1.5cm]{figs/MEFN/true_contours.pdf}\\
-{\scriptsize Initial distribution $p_0$}& \parbox{0.3\textwidth}{\scriptsize MEFN result $p_{\phi^*}$ (Control case: moment matching)}&{\scriptsize Ground truth $p^*$}\\
-%& {\small (Control case: moment matching network)} & \\
-%\\
-\end{tabular}
+\item Natural application of maximum entropy modeling.
+\end{itemize}
 \end{frame}
 
+
 \begin{frame}
-\frametitle{Experiment: Texture modeling}
+\frametitle{Texture modeling (formulation)}
 \begin{itemize}
-\item Sample from the space of images $\vz \in [0,1]^{224 \times 224 \times 3}$ where $T(\vz): [0,1]^{224 \times 224 \times 3} \rightarrow \mathbb{R}$ is a complicated ``texture loss'' defined in \textcite{ulyanov2016texture}.
-\item \textcite{ulyanov2016texture} proposes texture net, which solves the problem by
+\item Sample from the space of images $\vz \in [0,1]^{d = w \times h \times c}$ where $w \times h$ is the image size, $c$ is the number of channels ($c = 3$ for RGB representation). 
+\item Texture loss: $T(\vz): [0,1]^{w \times h \times c} \rightarrow \mathbb{R}$, a complicated form proposed in \textcite{ulyanov2016texture}.
+\item \textcite{ulyanov2016texture} proposes texture net, which solves the problem \alert{without considering entropy term.}
 \[\min E_{\mZ \sim p_0}\left[ T(f_\phi(\mZ)) \right] \]
-without considering entropy term.
-\item We compare our formulation with texture net. We use real-nvp \parencite{dinh2016density} as the normalizing flow structure
+%\item We compare our formulation with texture net. 
+\item We build MEFN using $T(\vz)$ as the expectation constraint. 
+\item We use real-nvp \parencite{dinh2016density} as the normalizing flow structure.
 \end{itemize}
 \end{frame}
 
@@ -1018,7 +1042,7 @@ Input & \hspace{-0.3cm} \parbox{0.3\textwidth}{\centering Texture net \\\parenci
 \hspace{-0.3cm}\includegraphics[scale=0.3,clip = true, trim=0cm 0cm 0cm 0cm]{figs/MEFN/fig_texture_ent_0.jpg}
 \vspace{0.6cm}
 \\
-Texture cost & \hspace{-0.3cm} Negative entropy & \hspace{-0.3cm} RGB histogram\\
+Texture loss & \hspace{-0.3cm} Negative entropy & \hspace{-0.3cm} RGB histogram\\
 \includegraphics[scale=0.33,clip = true]{figs/MEFN/fig_texture_cost.pdf}&
 \hspace{-0.3cm}\includegraphics[scale=0.33,clip = true]{figs/MEFN/fig_texture_entropy.pdf}&
 \hspace{-0.3cm}\includegraphics[scale=0.33,clip = true]{figs/MEFN/fig_texture_RGB_hist.pdf} \\
@@ -1029,10 +1053,10 @@ Texture cost & \hspace{-0.3cm} Negative entropy & \hspace{-0.3cm} RGB histogram\
 
 
 \begin{frame}
-\frametitle{Experiment: Texture modeling}
-\begin{itemize}
-\item We provide two numerical measure for assessing sample diversity given a set of images $\{\vz^{(1)},...,\vz^{(n)}\}$.
-\end{itemize}
+\frametitle{Experiment: Texture modeling (diversity measure)}
+%\begin{itemize}
+%\item We provide two numerical measures for assessing sample diversity given a set of images $\{\vz^{(1)},...,\vz^{(n)}\}$.
+%\end{itemize}
 \centering
 \begin{table}[htpb]
 %\caption{Quantitative measure of image diversity using $20$ randomly sampled images}
@@ -1041,17 +1065,18 @@ Texture cost & \hspace{-0.3cm} Negative entropy & \hspace{-0.3cm} RGB histogram\
 \begin{tabular}{l | l | lll}
 Method  & $d_{L^2}$& SST & SSW & SSB \\
 \hline 
-Texture net  & 11534 & 128680 & 109577 & 19103\\
-MEFN   & 17014 & 175604 & 161639 & 13964 \\
+Texture net  & 0.077 & 0.043 & 0.036 & 0.006\\
+MEFN   & \alert{0.113} & 0.058 & \alert{0.054} & \alert{0.005} \\
 \end{tabular}
 \end{center}
 \begin{itemize}
-\item Mean Euclidean distance: $d_{L^2} = \text{mean}_{i \neq j} \|\vz^{(i)} - \vz^{(j)} \|_2^2$
-\item ANOVA: $\text{SST} = \text{SSW} + \text{SSB}$
+\item For $n=20$ randomly sampled image $\vz^{(1)},...,\vz^{(20)}$
+\item $d_{L^2} = \text{mean}_{i \neq j} \frac{1}{d}\|\vz^{(i)} - \vz^{(j)} \|_2^2$: Mean Euclidean distance.
+\item ANOVA: $\text{SST} = \text{SSW} + \text{SSB}$, $\bar{\vz} = \frac{1}{n} \sum_{i} \vz^{(i)}$.
 \begin{itemize}
-\item Total: $\text{SST} = \sum_{i,k} (z_k^{(i)} - \bar{z})^2$
-\item Within group: $\text{SSW} = \sum_{i,k} (z_k^{(i)} - \bar{z}_k)^2$ (larger $\Rightarrow$ better)
-\item Between group: $\text{SSB} = \sum_{k} n (\bar{z}_k - \bar{z})^2$ (smaller $\Rightarrow$ better)
+\item $\text{SST} = \frac{1}{nd}\sum_{i,k} (z_k^{(i)} - \bar{z})^2$: Total var.
+\item $\text{SSW} = \frac{1}{nd}\sum_{i,k} (z_k^{(i)} - \bar{z}_k)^2$: residue var, larger $\Rightarrow$ better.
+\item $\text{SSB} = \frac{1}{n}\sum_{k} (\bar{z}_k - \bar{z})^2$: mean image var, smaller $\Rightarrow$ better.
 \end{itemize}
 \end{itemize}
 \label{tab:texture}
@@ -1063,10 +1088,10 @@ MEFN   & 17014 & 175604 & 161639 & 13964 \\
 \begin{itemize}
 \item Summary
 \begin{itemize}
-\item Bridging information theory and deep learning
+%\item Bridging information theory and deep learning
 \item Solve maximum entropy problem by optimizing a normalizing flow
 \item Combining augmented Lagrangian optimization with stochastic optimization
-\item Promising result on simulation and real data
+\item Promising experiment result on texture modeling
 \end{itemize}
 \item Future work
 \begin{itemize}
@@ -1170,6 +1195,24 @@ where $\odot$ is element-wise product. $s(\vz_1), t(\vz_1): \mathbb{R}^d \righta
 \end{itemize}
 \end{frame}
 
+\begin{frame}
+\frametitle{Experiment: Dirichlet}
+\begin{itemize}
+\item Dirichlet distribution is the ME distribution on a simplex $\mathcal{S}=\{\vz = (z_1,\dots,z_{d-1}):z_i\geq 0\text{ and }\sum_{k=1}^{d-1}z_k\leq 1\}$ with expetation on the log of each coordinate $E[\log Z_k] = \kappa_k (k = 1,...,d)$, where $Z_d = 1 - \sum_{k=1}^{d-1} Z_k$.
+\item $10$ layers of planar flow \parencite{Rezende2015}.
+\end{itemize}
+\begin{tabular}[t]{ccc}
+\vspace{-0cm}
+\includegraphics[scale=0.3,clip = true, trim=1cm 1.5cm 1cm 1.5cm]{figs/MEFN/normal_contours.pdf}&
+\includegraphics[scale=0.3,clip = true, trim=1cm 1.5cm 1cm 1.5cm]{figs/MEFN/network_contours_moments.pdf}&
+\includegraphics[scale=0.3,clip = true, trim=1cm 1.5cm 1cm 1.5cm]{figs/MEFN/true_contours.pdf}\\
+{\scriptsize Initial distribution $p_0$}& \parbox{0.3\textwidth}{\scriptsize MEFN result $p_{\phi^*}$ (Control case: moment matching)}&{\scriptsize Ground truth $p^*$}\\
+%& {\small (Control case: moment matching network)} & \\
+%\\
+\end{tabular}
+\end{frame}
+
+
 \end{document}
 
 %%%%%%%%%%%% deprecated slides %%%%%%%%%%%%%%
@@ -1209,6 +1252,5 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \end{itemize}
 \end{itemize}
 \end{frame}
-
 
 
