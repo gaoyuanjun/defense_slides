@@ -465,11 +465,11 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item Developed VBEM algorithm.
 \item Observed superior fitted results on real neural data.
 \end{itemize}
-\item Extensions
+\item Future work
 \begin{itemize}
-\item $g(\cdot)$ vary across time?
-\item Share information of $g(\cdot)$ across neurons? (hierarchical model?)
-\item Generative models for under-dispersion?
+\item Time-varying dispersion structure.
+\item Hierarchical model that share information of $g(\cdot)$ across neurons.
+\item Generative models for under-dispersion.
 \end{itemize}
 \item \alert{Gao Y}, Buesing L, Shenoy KV, Cunningham JP (2015) High-dimensional neural spike train analysis with generalized count linear dynamical systems. NIPS 2015.
 \end{itemize}
@@ -690,9 +690,9 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \end{itemize}
 \item Future work
 \begin{itemize}
-\item Better stochastic optimization scheme
-\item Interpretable nonlinearity
-\item Application on more complex datasets
+\item Better stochastic optimization scheme.
+\item Interpretable nonlinearity.
+\item Application on more complex datasets.
 \end{itemize}
 \item \alert{Gao Y}*, Archer E*, Paninski L, Cunningham JP (2016) Linear dynamical neural population models through nonlinear embeddings. NIPS 2016. (* = equal contribution)
 \end{itemize}
@@ -885,16 +885,16 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \begin{itemize}
 \item Summary
 \begin{itemize}
-\item Formulating calcium imaging ROI detection as a structured matrix factorization problem
-\item Fast greedy algorithm
+\item Formulated calcium imaging ROI detection as a structured matrix factorization problem.
+\item Developed a fast greedy algorithm.
 %\item Fast ROI detection algorithm
 \end{itemize}
 \item Future work
 \begin{itemize}
-\item More spatial and temporal structure
-\item Overlapping neuron
-\item Online ROI detection
-\item Motion correction, background elimination
+\item More spatial and temporal structure.
+\item Overlapping neuron.
+\item Online ROI detection.
+\item Motion correction and background elimination.
 \end{itemize}
 \item {\scriptsize Pnevmatikakis EA, Soudry D, \alert{Gao Y}, Machado TA, Merel J, Pfau D, Reardon T, Mu Y, Lacefield C, Yang W, Ahrens M, Bruno R, Jessell TM, Peterka DS, Yuste R, Paninski L (2016) Simultaneous denoising, deconvolution, and demixing of calcium imaging data. Neuron, 89(2), 285-299.}
 \end{itemize}
@@ -909,7 +909,7 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \begin{itemize}
 \item \alert{Entropy}: for a continuous distribution with density $p(\vz)$ where $\vz \in \mathbb{R}^d$, the entropy is defined as
 \[H(p) = - \int p(\vz) \log p(\vz)  d \vz = E_{\mZ \sim p} \left[ -\log p(\mZ) \right].\]
-A popular measure of diversity or information content.
+\item A popular measure of diversity or information content.
 \item \alert{Maximum entropy (ME) principle}: Subject to some given prior knowledge, the distribution that makes \alert{minimal additional assumptions} is that which has the \alert{largest entropy} of any distribution obeying those constraints
 \end{itemize}
 \end{frame}
@@ -979,7 +979,7 @@ where $p_\phi$ is the distribution of $\mZ = f_\phi(\mZ_0)$ for $\mZ_0 \sim p_0$
 \begin{frame}
 \frametitle{Normalizing flow}
 \begin{itemize}
-\item \alert{normalizing flow}: A parameterized family of smooth and invertible transformation \[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}.\]
+\item \alert{Normalizing flow}: A parameterized family of \alert{smooth and invertible} transformation \[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}.\]
 \item Explicit probability density form for $Z = f_\phi(Z_0) \sim p_\phi$ by \alert{change-of-variable theorem}
 \[p_\phi(\vz) = p_0\left( f_\phi^{-1}(\vz) \right) | \det \left(J_\phi (\vz)\right) |^{-1}.\]
 \item Constructing a flexible family of normalizing flows by composing simple normalizing flows (\alert{deep learning})
@@ -1107,9 +1107,9 @@ MEFN   & \alert{0.113} & 0.058 & \alert{0.054} & \alert{0.005} \\
 \item Summary
 \begin{itemize}
 %\item Bridging information theory and deep learning
-\item Solve maximum entropy problem by optimizing a normalizing flow
-\item Combining augmented Lagrangian optimization with stochastic optimization
-\item Promising experiment result on texture modeling
+\item Solved maximum entropy problem by optimizing a normalizing flow.
+\item Combined augmented Lagrangian optimization with stochastic optimization.
+\item Obtained promising texture modeling result.
 \end{itemize}
 \item Future work
 \begin{itemize}
@@ -1120,14 +1120,20 @@ MEFN   & \alert{0.113} & 0.058 & \alert{0.054} & \alert{0.005} \\
 \end{itemize}
 \end{frame}
 
-%\begin{frame}
-%\frametitle{Acknowledgement}
-%\end{frame}
+\begin{frame}
+\frametitle{Acknowledgement}
+\begin{center}
+\Large{Thank you!}
+\end{center}
+\end{frame}
 
 
 \begin{frame}
 \frametitle{Table of Contents}
 \tableofcontents
+\begin{center}
+\alert{End of the talk.\\ Questions?}
+\end{center}
 \end{frame}
 
 \begin{frame}
