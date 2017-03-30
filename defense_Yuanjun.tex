@@ -294,6 +294,10 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{center}
 \includegraphics[width = 0.60\textwidth]{./figs/gclds/fig_var_GPoiss.pdf}
 \end{center}
+\begin{itemize}
+\item Probability mass function for GC distribution family
+\[p_{\mathcal{GC}}(x; \theta, g(\cdot)) \propto \frac{\exp(\theta \cdot x + g(x) )}{x!}, ~~~x \in \mathbb{N}\]
+\end{itemize}
 \end{frame}
 
 
@@ -556,7 +560,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 %No analytical form, hard to sample.
 \item Recognition model, product-of-Gaussian form:
 \[q_\phi(\vz_r | \vx_r) \propto \underbrace{q_\phi(\vz_{r1}) 
-\prod_{t=1}^{T-1}q_\phi(\vz_{r(t+1)} - \tilde{A}\vz_{rt}) }_{Gaussian}
+\prod_{t=1}^{T-1}q_\phi(\vz_{r(t+1)} | \vz_{rt}) }_{Gaussian}
 \prod_{t=1}^T \underbrace{q_\phi(\vz_{rt} | \vx_{rt})}_{\alert{Gaussian}}
 \]
 Approximates a complicated factor with a Gaussian factor dependent on the data in a complicated way.
@@ -654,6 +658,10 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \includegraphics[width = 0.30\textwidth]{./figs/flds/fig_GeorgeMove_2dvisual_mat_PLDS.pdf}&
 \includegraphics[width = 0.30\textwidth]{./figs/flds/fig_GeorgeMove_2dvisual_py_PLDS.pdf}
 \end{tabular}
+\begin{itemize}
+\item Recovering the behavior structure from neural data in a \alert{unsupervised} fashion.
+\item \alert{Concise} and \alert{informative} latent dimensions.
+\end{itemize}
 \end{frame}
 
 \begin{frame}
@@ -750,15 +758,16 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 
 \end{frame}
 
+
 \begin{frame}
 \frametitle{Model formulation}
 \begin{itemize}
-\item  $X \in \mathbb{R}^{d \times T}$ represents the calcium imaging data, where each column is a (vectorized) frame that contains $d$ pixels
-\item Decompose $X$ into a product of $n$ \alert{spatial component} and \alert{temporal component}% (neural acitivities)
+\item  $X \in \mathbb{R}^{N \times T}$ represents the calcium imaging data, where each column is a (vectorized) frame that contains $N$ pixels
+\item Decompose $X$ into a product of $K$ \alert{spatial component} and \alert{temporal component}% (neural acitivities)
 \[X = D A^T + \text{noise}\]
 \begin{itemize}
-\item $D = [D_1,...,D_n] \in \mathbb{R}^{d \times n}$ represents the neuron shapes
-\item $A = [A_1,...,A_n] \in \mathbb{R}^{T \times n}$ is the neural activities%, $K$ is the number of neurons.
+\item $D = [D_1,...,D_K] \in \mathbb{R}^{N \times K}$ represents the neuron shapes
+\item $A = [A_1,...,A_K] \in \mathbb{R}^{T \times K}$ is the neural activities%, $K$ is the number of neurons.
 \end{itemize}
 \item Further exploit structure of the components (localized neuron shapes)
 \end{itemize}
@@ -774,14 +783,14 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 & \underset{D, A}{\text{minimize}}
 & & \| X - D A^T \|_2^2 + f_D(D), \\
 & \text{subject to}
-& & D_i \in \mathcal{D}_{w}^+; i = 1, \ldots, n,\\
+& & D_k \in \mathcal{D}_{w}^+; k = 1, \ldots, K,\\
 & 
-& & \|A_i\|_2 \leq c_i,
+& & \|A_k\|_2 \leq c_k,
 \end{aligned}
 \]
 \item $\mathcal{D}_{w}^+$: non-negative vectors whose nonzero values is within a $w \times w$ window
 \item $f_D(D)$ regularizes the neuron shape (will discuss later)
-\item $\|A_i\|_2 \leq c_i$ avoids degenerate solution
+\item $\|A_k\|_2 \leq c_k$ avoids degenerate solution
 \end{itemize}
 \end{frame}
 
@@ -790,11 +799,11 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \frametitle{Greedy algorithm}
 \begin{itemize}
 \item Identify ROIs one at a time, using the residual un-explained by existing signals.
-\item At iteration $i$, given the current residue (unexplained by existing ROIs)
+\item At iteration $k$, given the current residue (unexplained by existing ROIs)
 \begin{itemize}
-\item \alert{Greedy identification}: Identify the location $p_i$ where the Gaussian kernel explains the largest variance of the current residue across time.
-\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component.
-\item \alert{Residue update}: Subtract the newly identified signal.
+\item \alert{Greedy identification}: Identify the location $p_k$ where the Gaussian kernel explains most of the data (across time)
+\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component
+\item \alert{Residue update}: Subtract the newly identified signal
 \end{itemize}
 \end{itemize}
 \end{frame}
@@ -803,32 +812,34 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \begin{frame}
 \frametitle{Shape fine tuning}
 \begin{itemize}
-\item Given current residue $R$, an identified center pixel $p_i$, denote $S_i$ as a $w \times w$ window centered at $p_i$
+\item Given current residue $R$, an identified center pixel $p_k$, denote $S_k$ as a $w \times w$ window centered at $p_k$
 \[
 \begin{aligned}
-& \underset{D_i, A_i}{\text{minimize}}
-& & \| R - D_i A_i^T \|^2 + f(D_i), \\%\sum_{i = 1}^3 \lambda_i f_i(D_k),\\
+& \underset{D_k, A_k}{\text{minimize}}
+& & \| R - D_k A_k^T \|^2 + f(D_k), \\%\sum_{i = 1}^3 \lambda_i f_i(D_k),\\
 & \text{subject to}
-& & D_{ip} \geq 0, p \in S_i,\\
+& & D_{kp} \geq 0, p \in S_k,\\
 &
-& & D_{ip} = 0, p \notin S_i,\\
+& & D_{kp} = 0, p \notin S_k,\\
 & 
-& & \|A_i\|_2 \leq c_i,
+& & \|A_k\|_2 \leq c_k,
 \end{aligned}
 \]
 %\begin{itemize}
-\item $f(D_i) = \lambda_1 f_1(D_i) +  \lambda_2 f_2(D_i) +  \lambda_3 f_3(D_i)$
+\item $f(D_k) = \sum_{i=1}^3 \lambda_i f_i(D_k)$
 %where
 \begin{itemize}
-\item $f_1(D_i) = \sum_p \tau_{(p, p_i)} | D_{ip} |$ encourages sparsity
-\item $f_2(D_i) = \sum_p (D_{ip} - G_{p_i})^2$ encourages Gaussian shape
-\item $f_3(D_i) = \sum_{\text{$p_1$ and $p_2$ are neighbors}} (D_{ip_1} - D_{ip_2})^2$ encourages smoothness
+\item $f_1(D_k) = \sum_p \tau_{(p, p_k)} | D_{kp} |$ encourages sparsity
+\item $f_2(D_k) = \sum_p (D_{kp} - G_{p_k})^2$ encourages Gaussian shape
+\item $f_3(D_k) = \sum_{\text{$p_1$ and $p_2$ are neighbors}} (D_{kp_1} - D_{kp_2})^2$ encourages smoothness
 \end{itemize}
-\item Block coordinate descent
+\item Optimize by block coordinate descent
 %\item Need to tune regularization parameters, not necessarily good since those would shrink the estimated shape
 \end{itemize}
 %\end{itemize}
 \end{frame}
+
+
 
 
 \begin{frame}
@@ -920,7 +931,7 @@ A popular measure of diversity or information content.
 \item Maximum entropy (ME) problem
 \begin{eqnarray*}
 %\substack{E_{\mZ\sim p}[T(\mZ)]=0 \\ \supp(p)=\mathcal{X}}
-p^{*} &=& \text{maximize}~~~ H(p) \\
+p^{*} &=& \underset{p}{\text{maximize}}~~~ H(p) \\
 && \text{subject to} ~~~E_{\mZ\sim p}[T(\mZ)]=0 \nonumber\\
 && ~~~~~~~~~~~~~~~~~~\supp(p)=\mathcal{Z} \nonumber,
 \end{eqnarray*}
@@ -945,28 +956,34 @@ p^*(\vz) \propto e^{<\eta, T(\vz)>} \mathbbm{1}(\vz \in \mathcal{Z})
 
 
 \begin{frame}
-\frametitle{Idea: normalizing flow}
-\begin{itemize}
-\item Considering a family of smooth and invertible transformation (\alert{normalizing flow}) \[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}\]
-\item Transform a simple distribution $Z_0 \sim p_0$ to a complicated one $Z = f_\phi(Z_0) \sim p_\phi$ by \alert{change-of-variable theorem}.
-\[p_\phi(\vz) = p_0\left( f_\phi^{-1}(\vz) \right) | \det \left(J_\phi (\vz)\right) |^{-1}\]
-\item Constructing a flexible family of normalizing flow by composing simple normalizing flows (\alert{deep learning})
-\[\mZ = f_{k}\circ f_{k-1}\circ\dots \circ f_{1}(\mZ_{0})\]
-\end{itemize}
-\end{frame}
-
-\begin{frame}
 \frametitle{Maximum entropy flow network (MEFN)}
 \begin{itemize}
-\item Identify a transformation $f_{\phi^*} \in \mathcal{F}$ that transforms a simple distribution $p_0$ to approximate the maximum entropy distribution.
-\begin{eqnarray*}\label{optobj}
+\item Identify a transformation $f_{\phi^*} \in \mathcal{F}$ that transforms a simple distribution $p_0$ to approximate the ME distribution.
+\begin{eqnarray*}
 %\substack{E_{\mZ\sim p}[T(\mZ)]=0 \\ \supp(p)=\mathcal{X}}
-\phi^{*} &=& \text{maximize}~~~ H(p_\phi) \\
+p^{*} &=& \underset{p}{\text{maximize}}~~~ H(p) \\
+&& \text{subject to} ~~~E_{\mZ\sim p}[T(\mZ)]=0 \nonumber\\
+&& ~~~~~~~~~~~~~~~~~~\supp(p)=\mathcal{Z} \nonumber,\\
+&&~~~~~~~~\Downarrow\\
+%\substack{E_{\mZ\sim p}[T(\mZ)]=0 \\ \supp(p)=\mathcal{X}}
+\phi^{*} &=& \underset{\phi}{\text{maximize}}~~~ H(p_\phi) \\
 && \text{subject to} ~~~R(\phi) = E_{\mZ_0\sim p_0}[T(f_\phi(\mZ_{0}))]=0 \nonumber\\
 && ~~~~~~~~~~~~~~~~~~\supp(p_\phi)=\mathcal{Z}. \nonumber
 \end{eqnarray*}
-where $p_\phi$ is the distribution of $f_\phi(\mZ_0)$ for $\mZ_0 \sim p_0$.
+where $p_\phi$ is the distribution of $\mZ = f_\phi(\mZ_0)$ for $\mZ_0 \sim p_0$.
 %\[p_\phi(\vz) = p_0( f_\phi^{-1}(\vz) ) | \det (J_\phi (\vz)) |^{-1}\]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Normalizing flow}
+\begin{itemize}
+\item \alert{normalizing flow}: A parameterized family of smooth and invertible transformation \[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}.\]
+\item Explicit probability density form for $Z = f_\phi(Z_0) \sim p_\phi$ by \alert{change-of-variable theorem}
+\[p_\phi(\vz) = p_0\left( f_\phi^{-1}(\vz) \right) | \det \left(J_\phi (\vz)\right) |^{-1}.\]
+\item Constructing a flexible family of normalizing flows by composing simple normalizing flows (\alert{deep learning})
+\[\mZ = f_{k}\circ f_{k-1}\circ\dots \circ f_{1}(\mZ_{0}).\]
 \end{itemize}
 \end{frame}
 
@@ -975,11 +992,11 @@ where $p_\phi$ is the distribution of $f_\phi(\mZ_0)$ for $\mZ_0 \sim p_0$.
 \frametitle{Augmented Lagrangian method}
 \begin{itemize}
 \item Augmented Lagrangian method minimizes the objective
-\[L(\phi; \lambda, c) = - H(p_\phi) + \lambda^{\top} R(\phi) + \dfrac{c}{2}||R(\phi)||^2\]
+\[L(\phi; \lambda, c) = - H(p_\phi) + \lambda^{\top} R(\phi) + \dfrac{c}{2}||R(\phi)||^2.\]
 for a sequence of $\lambda \in \mathbb{R}^m$ and $c \geq 0$.
 \item Update rule: at iteration $k$, given $\lambda_k$ and $c_k$.
 \begin{itemize}
-\item Find $\phi_k$ that optimizes $L(\phi; \lambda_k, c_k)$
+\item Find $\phi_k$ that optimizes $L(\phi; \lambda_k, c_k)$.
 \item Update $\lambda$ and $c$ by
 \[\begin{split}
 \lambda_{k+1} =& \lambda_k + c_k R(\phi_k)\\
@@ -1228,7 +1245,7 @@ where $\odot$ is element-wise product. $s(\vz_1), t(\vz_1): \mathbb{R}^d \righta
 %No analytical form, hard to sample.
 \item Recognition model, for a single trial:
 \[q_\phi(\vz | \vx) \propto \underbrace{q_\phi(\vz_{1}) 
-\prod_{t=1}^{T-1}q_\phi(\vz_{r(t+1)} - \tilde{A}\vz_{rt}) }_{Gaussian}
+\prod_{t=1}^{T-1}q_\phi(\vz_{r(t+1)}|\vz_{rt}) }_{Gaussian}
 \underbrace{\prod_{t=1}^T q_\phi(\vz_{rt} | \vx_{rt})}_{\alert{Gaussian}}
 \]
 Approximates a complicated factor with a Gaussian factor dependent on the data in a complicated way.
@@ -1295,11 +1312,11 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \frametitle{Greedy algorithm}
 \begin{itemize}
 \item Identify ROIs one at a time, using the residual un-explained by existing signals.
-\item At iteration $k$, given the current residue (unexplained by existing ROIs)
+\item At iteration $i$, given the current residue (unexplained by existing ROIs).
 \begin{itemize}
-\item \alert{Greedy identification}: Identify the location $p_k$ where the Gaussian kernel explains most of the data (across time)
-\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component
-\item \alert{Residue update}: Subtract the newly identified signal
+\item \alert{Greedy identification}: Identify the location $p_k$ where the Gaussian kernel explains the largest variance of the current residue across time.
+\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component.
+\item \alert{Residue update}: Subtract the newly identified signal.
 \end{itemize}
 \end{itemize}
 \end{frame}
@@ -1334,4 +1351,89 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \end{itemize}
 %\end{itemize}
 \end{frame}
+
+
+%%%% Calcium imaging ROI, consistent notation
+
+\begin{frame}
+\frametitle{Model formulation}
+\begin{itemize}
+\item  $X \in \mathbb{R}^{d \times T}$ represents the calcium imaging data, where each column is a (vectorized) frame that contains $d$ pixels
+\item Decompose $X$ into a product of $n$ \alert{spatial components} and \alert{temporal components}% (neural acitivities)
+\[X = D A^T + \text{noise}\]
+%\begin{itemize}
+\item $D = [D_1,...,D_n] \in \mathbb{R}^{d \times n}$ represents the neuron shapes
+\item $A = [A_1,...,A_n] \in \mathbb{R}^{T \times n}$ is the neural activities%, $K$ is the number of neurons.
+%\end{itemize}
+\item Further exploit structure of the components (localized neuron shapes)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Model formulation: objective function}
+\begin{itemize}
+\item Structured matrix factorization
+\[
+%\label{equ:opt}
+\begin{aligned}
+& \underset{D, A}{\text{minimize}}
+& & \| X - D A^T \|_2^2 + f_D(D), \\
+& \text{subject to}
+& & D_i \in \mathcal{D}_{w}^+; i = 1, \ldots, n,\\
+& 
+& & \|A_i\|_2 \leq c_i,
+\end{aligned}
+\]
+\item $\mathcal{D}_{w}^+$: non-negative vectors whose nonzero values is within a $w \times w$ window
+\item $f_D(D)$ regularizes the neuron shape (will discuss later)
+\item $\|A_i\|_2 \leq c_i$ avoids degenerate solution
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Greedy algorithm}
+\begin{itemize}
+\item Identify ROIs one at a time, using the residual un-explained by existing signals.
+\item At iteration $i$, given the current residue (unexplained by existing ROIs).
+\begin{itemize}
+\item \alert{Greedy identification}: Identify the location $p_i$ where the Gaussian kernel explains the largest variance of the current residue across time.
+\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component.
+\item \alert{Residue update}: Subtract the newly identified signal.
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Shape fine tuning}
+\begin{itemize}
+\item Given current residue $R$, an identified center pixel $p_i$, denote $S_i$ as a $w \times w$ window centered at $p_i$
+\[
+\begin{aligned}
+& \underset{D_i, A_i}{\text{minimize}}
+& & \| R - D_i A_i^T \|^2 + f(D_i), \\%\sum_{i = 1}^3 \lambda_i f_i(D_k),\\
+& \text{subject to}
+& & D_{ip} \geq 0, p \in S_i,\\
+&
+& & D_{ip} = 0, p \notin S_i,\\
+& 
+& & \|A_i\|_2 \leq c_i,
+\end{aligned}
+\]
+%\begin{itemize}
+\item $f(D_i) = \lambda_1 f_1(D_i) +  \lambda_2 f_2(D_i) +  \lambda_3 f_3(D_i)$
+%where
+\begin{itemize}
+\item $f_1(D_i) = \sum_p \tau_{(p, p_i)} | D_{ip} |$ encourages sparsity
+\item $f_2(D_i) = \sum_p (D_{ip} - G_{p_i})^2$ encourages Gaussian shape
+\item $f_3(D_i) = \sum_{\text{$p_1$ and $p_2$ are neighbors}} (D_{ip_1} - D_{ip_2})^2$ encourages smoothness
+\end{itemize}
+\item Block coordinate descent
+%\item Need to tune regularization parameters, not necessarily good since those would shrink the estimated shape
+\end{itemize}
+%\end{itemize}
+\end{frame}
+
+
 
