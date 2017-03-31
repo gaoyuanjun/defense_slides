@@ -110,7 +110,7 @@
 \visible<2->{
 \begin{minipage}{0.30\textwidth}
 %\begin{center}
-\includegraphics[width = 0.6\textwidth]{./figs/overview/Ape-Cartoon-Chimpanzee-Monkey-Animal-Chimp-Cute-474147.png}
+\includegraphics[width = 0.8\textwidth]{./figs/overview/monkey.jpg}
 %\end{center}
 \end{minipage}
 }
@@ -292,7 +292,7 @@
 \begin{frame}
 \frametitle{Common parameterization and our extensions}
 \begin{itemize}
-\item Common assumptions for latent dynamics: linear Gaussian dynamical system (LDS)
+\item Common assumptions for latent dynamics: Gaussian linear dynamical system (LDS)
  \[\begin{split}
  \vz_{1} &\sim \N(\mu_1, Q_1)\\
  \vz_{t+1} | \vz_{t} &\sim \N(A \vz_{t}, Q)
@@ -439,7 +439,8 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \frametitle{Real data analysis: data}
 \begin{tabular}{ cc } 
 {\small Data} & {\small Variance and mean of spike counts}\\
-\includegraphics[width = 0.40\textwidth]{./figs/gclds/fig_monkey.png}&
+%\includegraphics[width = 0.40\textwidth]{./figs/gclds/fig_monkey.png}&
+\includegraphics[width = 0.40\textwidth]{./figs/overview/monkey.jpg}&
 \includegraphics[width = 0.45\textwidth]{./figs/gclds/fig_var_obs_Move_seq14.pdf}
 \end{tabular}
 \begin{itemize}
@@ -562,9 +563,9 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
  x_{rti} \sim& \text{Poisson}(\alert{f}_i(\vz_{rt})) \text{ (PfLDS) } \\
  &\text{   or }\mathcal{GC}(\alert{f}_i(\vz_{rt}), g_i(\cdot)) \text{ (GCfLDS)}%, i = 1,...,n
  \end{split}\]
- where $f_i$ is a nonlinear function parameterized by a neural network
- \item Linear latent dynamics: simple, tractable, interpretable
- \item Nonlinear observation: flexible
+ where $f_i$ is a nonlinear function parameterized by a neural network.
+%\item Linear latent dynamics: simple, tractable, interpretable
+%\item Nonlinear observation: flexible
 \end{itemize}
 \end{frame}
 
@@ -574,7 +575,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 %\item Auto-encoding Variational Bayes (AEVB)
 \begin{itemize}
 \item Auto-encoding Variational Bayes (AEVB)
-\item Learn a mapping (recognition model) from data to the \alert{approximate posterior distribution of latent variable}. 
+\item Learn a \alert{mapping (recognition model)} from data to the approximate posterior distribution of latent variable. 
 \item Jointly optimize the generative model parameters and recognition model parameters.
 \item Naturally incorporate stochastic optimization to handle large datasets.
 \item Tractable for a large class of graphical models
@@ -694,7 +695,8 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \frametitle{Real data analysis: Primate motor cortex}
 \begin{tabular}{ cc } 
 {\small Data} & {\small Reaching trajectory} \\
-\includegraphics[width = 0.45\textwidth]{./figs/gclds/fig_monkey.png}&
+%\includegraphics[width = 0.45\textwidth]{./figs/gclds/fig_monkey.png}&
+\includegraphics[width = 0.45\textwidth]{./figs/overview/monkey.jpg}&
 \includegraphics[width = 0.40\textwidth]{./figs/flds/fig_GeorgeMove_trajectory.pdf}
 \end{tabular}
 \end{frame}
@@ -852,11 +854,11 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \frametitle{Greedy algorithm}
 \begin{itemize}
 \item Identify ROIs one at a time, using the residual un-explained by existing signals.
-\item At iteration $k$, given the current residue (unexplained by existing ROIs)
+\item At iteration $k$, given the current residue (unexplained by existing ROIs):
 \begin{itemize}
-\item \alert{Greedy identification}: Identify the location $p_k$ where the Gaussian kernel explains most of the data (across time)
-\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component
-\item \alert{Residue update}: Subtract the newly identified signal
+\item \alert{Greedy identification}: Identify the location $p_k$ where the Gaussian kernel explains most of the data (across time).
+\item \alert{Shape fine tuning}: Locally optimize the spatial and temporal component.
+\item \alert{Residue update}: Subtract the newly identified signal.
 \end{itemize}
 \end{itemize}
 \end{frame}
@@ -1098,7 +1100,7 @@ where $\vz^{(i)} \sim p_0$. We can then optimize the objective by stochastic gra
 \[\min E_{\mZ \sim p_0}\left[ T(f_\phi(\mZ)) \right] \]
 %\item We compare our formulation with texture net. 
 \item We build MEFN using $T(\vz)$ as the expectation constraint. 
-\item We use real-nvp \parencite{dinh2016density} as the normalizing flow structure.
+%\item We use real-nvp \parencite{dinh2016density} as the normalizing flow structure.
 \end{itemize}
 \end{frame}
 
