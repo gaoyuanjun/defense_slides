@@ -77,16 +77,69 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%% Overview %%%%%%%%%%%%%%%%%%
 
+\begin{frame}
+\frametitle{Overview}
+%\begin{itemize}
+%\item Brain, an \alert{amazing} organ!
+%\end{itemize}
+\begin{center}
+\includegraphics[width = 0.45\textwidth]{./figs/overview/543px-Brain_human_sagittal_section.png}
+\end{center}
+%https://commons.wikimedia.org/wiki/File%3ABrain_human_sagittal_section.svg
+\end{frame}
+
+
 
 \begin{frame}
-%% TODO: shorten things
 \frametitle{Overview}
-\centering
-\includegraphics[width = 0.50\textwidth]{./figs/gclds/fig_monkey.png}
+\begin{center}
+
+\begin{tabular}{ccc}
+
+\begin{minipage}{0.5\textwidth}
+\begin{tabular}[t]{c}
+\visible<2->{\includegraphics[width=1\textwidth, height=0.1\textwidth,clip = true]{figs/ROI_cartoon/fig_cartoon_spike_1.pdf}}\\
+\visible<2->{\includegraphics[width=1\textwidth,height=0.1\textwidth, clip = true]{figs/ROI_cartoon/fig_cartoon_spike_2.pdf}}\\
+\visible<1->{\includegraphics[width=1\textwidth,height=0.1\textwidth,clip = true]{figs/ROI_cartoon/fig_cartoon_spike_3.pdf}}\\
+\scriptsize{Time}
+\end{tabular}
+\end{minipage}
+&
+\visible<2->{\Large $\Leftarrow$}
+&
+\visible<2->{
+\begin{minipage}{0.30\textwidth}
+%\begin{center}
+\includegraphics[width = 0.6\textwidth]{./figs/overview/Ape-Cartoon-Chimpanzee-Monkey-Animal-Chimp-Cute-474147.png}
+%\end{center}
+\end{minipage}
+}
+\\
+\visible<3->{
+{\Large $\Downarrow$}&&\\
+\begin{minipage}{0.5\textwidth}
+\includegraphics[width = 1.0\textwidth]{./figs/overview/spike_train_data.png}
+\end{minipage}}
+&
+\multicolumn{2}{l}{
+\visible<4->{
+\begin{minipage}{0.3\textwidth}
 \begin{itemize}
-\item Neuroscience + Big data = \alert{Opportunities}!
+\item Rich structure
+\item Large data
+\item \alert{Opportunities!}
 \end{itemize}
+\end{minipage}}}
+
+%$\Rightarrow$
+%&\\
+%\includegraphics[width = 0.25\textwidth]{./figs/overview/Zebrafish_embryos.png}
+\end{tabular}
+%}
+\end{center}
 \end{frame}
+
+
 
 
 \begin{frame}
@@ -354,7 +407,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item We set $q$ to be multivariate Gaussian
 \item We derive a looser but tractable ELBO%The vanilla ELBO is still intractable, we use Jensen's inequality to get a tractable but looser bound. %(looser bound $\Rightarrow$ worse performance?)
 %\item Fast initialization by Laplace approximation in .
-\item E-step: fast Laplace approximation initialization + dual optimization
+\item E-step: fast Laplace approximation initialization + dual optimization \parencite{emtiyaz2013fast}
 \item M-step: convex optimization + analytical solution
 \end{itemize}
 \end{itemize}
@@ -400,9 +453,9 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \begin{frame}
 \frametitle{Real data analysis: algorithms}
 \begin{itemize}
-\item Main algorithms to be compared
+\item Main algorithms to be compared 
 \begin{itemize}
-\item \alert{PLDS}: Poisson observation
+\item \alert{PLDS}: Poisson observation \parencite{Macke2015}
 \item \alert{GCLDS-full}: Generalized count observation, individual $g(\cdot)$ across neurons
 \end{itemize}
 \item Two control cases for GCLDS
@@ -465,12 +518,12 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item Developed VBEM algorithm.
 \item Observed superior fitted results on real neural data.
 \end{itemize}
-\item Future work
-\begin{itemize}
-\item Time-varying dispersion structure.
-\item Hierarchical model that share information of $g(\cdot)$ across neurons.
-\item Generative models for under-dispersion.
-\end{itemize}
+%\item Future work
+%\begin{itemize}
+%\item Time-varying dispersion structure.
+%\item Hierarchical model that share information of $g(\cdot)$ across neurons.
+%\item Generative models for under-dispersion.
+%\end{itemize}
 \item \alert{Gao Y}, Buesing L, Shenoy KV, Cunningham JP (2015) High-dimensional neural spike train analysis with generalized count linear dynamical systems. NIPS 2015.
 \end{itemize}
 \end{frame}
@@ -563,8 +616,8 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \prod_{t=1}^{T-1}q_\phi(\vz_{r(t+1)} | \vz_{rt}) }_{Gaussian}
 \prod_{t=1}^T \underbrace{q_\phi(\vz_{rt} | \vx_{rt})}_{\alert{Gaussian}}
 \]
-Approximates a complicated factor with a Gaussian factor dependent on the data in a complicated way.
-\item Jointly Gaussian distribution with block tri-diagonal precision matrix. Maintaining the Markovian structure.
+%Approximates a complicated factor with a Gaussian factor dependent on the data in a complicated way.
+\item Multivariate Gaussian distribution with block tri-diagonal precision matrix. %Maintaining the Markovian structure.
 \end{itemize}
 \end{frame}
 
@@ -688,12 +741,12 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \item Developed AEVB algorithm (flexible and scalable).
 \item Obtained concise latent representations.
 \end{itemize}
-\item Future work
-\begin{itemize}
-\item Better stochastic optimization scheme.
-\item Interpretable nonlinearity.
-\item Application on more complex datasets.
-\end{itemize}
+%\item Future work
+%\begin{itemize}
+%\item Better stochastic optimization scheme.
+%\item Interpretable nonlinearity.
+%\item Application on more complex datasets.
+%\end{itemize}
 \item \alert{Gao Y}*, Archer E*, Paninski L, Cunningham JP (2016) Linear dynamical neural population models through nonlinear embeddings. NIPS 2016. (* = equal contribution)
 \end{itemize}
 \end{frame}
@@ -889,13 +942,13 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \item Developed a fast greedy algorithm.
 %\item Fast ROI detection algorithm
 \end{itemize}
-\item Future work
-\begin{itemize}
-\item More spatial and temporal structure.
-\item Overlapping neuron.
-\item Online ROI detection.
-\item Motion correction and background elimination.
-\end{itemize}
+%\item Future work
+%\begin{itemize}
+%\item More spatial and temporal structure.
+%\item Overlapping neuron.
+%\item Online ROI detection.
+%\item Motion correction and background elimination.
+%\end{itemize}
 \item {\scriptsize Pnevmatikakis EA, Soudry D, \alert{Gao Y}, Machado TA, Merel J, Pfau D, Reardon T, Mu Y, Lacefield C, Yang W, Ahrens M, Bruno R, Jessell TM, Peterka DS, Yuste R, Paninski L (2016) Simultaneous denoising, deconvolution, and demixing of calcium imaging data. Neuron, 89(2), 285-299.}
 \end{itemize}
 \end{frame}
@@ -958,7 +1011,7 @@ p^*(\vz) \propto e^{<\eta, T(\vz)>} \mathbbm{1}(\vz \in \mathcal{Z})
 \begin{frame}
 \frametitle{Maximum entropy flow network (MEFN)}
 \begin{itemize}
-\item Identify a transformation $f_{\phi^*} \in \mathcal{F}$ that transforms a simple distribution $\mZ_0 \sim p_0$ (Gaussian) to a complicated one $\mZ = f_{\phi^*}(\mZ_0) \sim p_{\phi^*}$ that approximates the ME distribution.
+\item Identify a transformation $f_{\phi^*} \in \mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}$ that transforms a simple distribution $\mZ_0 \sim p_0$ (Gaussian) to $\mZ = f_{\phi^*}(\mZ_0) \sim p_{\phi^*}$ that approximates the ME distribution.
 \begin{eqnarray*}
 %\substack{E_{\mZ\sim p}[T(\mZ)]=0 \\ \supp(p)=\mathcal{X}}
 p^{*} &=& \underset{p}{\text{maximize}}~~~ H(p) \\
@@ -970,7 +1023,7 @@ p^{*} &=& \underset{p}{\text{maximize}}~~~ H(p) \\
 && \text{subject to} ~~~R(\phi) = E_{\mZ_0\sim p_0}[T(f_\phi(\mZ_{0}))]=0 \nonumber\\
 && ~~~~~~~~~~~~~~~~~~\supp(p_\phi)=\mathcal{Z}. \nonumber
 \end{eqnarray*}
-where $p_\phi$ is the distribution of $\mZ = f_\phi(\mZ_0)$ for $\mZ_0 \sim p_0$.
+%where $p_\phi$ is the distribution of $\mZ = f_\phi(\mZ_0)$ for $\mZ_0 \sim p_0$.
 %\[p_\phi(\vz) = p_0( f_\phi^{-1}(\vz) ) | \det (J_\phi (\vz)) |^{-1}\]
 \end{itemize}
 \end{frame}
@@ -979,7 +1032,7 @@ where $p_\phi$ is the distribution of $\mZ = f_\phi(\mZ_0)$ for $\mZ_0 \sim p_0$
 \begin{frame}
 \frametitle{Normalizing flow}
 \begin{itemize}
-\item \alert{Normalizing flow}: A parameterized family of \alert{smooth and invertible} transformation \[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}.\]
+\item \alert{Normalizing flow}: A parameterized family of \alert{smooth and invertible} transformation. %\[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}.\]
 \item Explicit probability density form for $Z = f_\phi(Z_0) \sim p_\phi$ by \alert{change-of-variable theorem}
 \[p_\phi(\vz) = p_0\left( f_\phi^{-1}(\vz) \right) | \det \left(J_\phi (\vz)\right) |^{-1}.\]
 \item Constructing a flexible family of normalizing flows by composing simple normalizing flows (\alert{deep learning})
@@ -1035,6 +1088,7 @@ where $\vz^{(i)} \sim p_0$. We can then optimize the objective by stochastic gra
 \end{frame}
 
 
+%http://www.texturex.com/Stone-Textures/
 \begin{frame}
 \frametitle{Texture modeling (formulation)}
 \begin{itemize}
@@ -1111,11 +1165,11 @@ MEFN   & \alert{0.113} & 0.058 & \alert{0.054} & \alert{0.005} \\
 \item Combined augmented Lagrangian optimization with stochastic optimization.
 \item Obtained promising texture modeling result.
 \end{itemize}
-\item Future work
-\begin{itemize}
-\item Better normalizing flow structure
-\item Better constrained stochastic optimization algorithm
-\end{itemize}
+%\item Future work
+%\begin{itemize}
+%\item Better normalizing flow structure
+%\item Better constrained stochastic optimization algorithm
+%\end{itemize}
 \item Loaiza G*, \alert{Gao Y}*, Cunningham JP (2017) Maximum entropy flow networks. ICLR 2017. (*=equal contribution) 
 \end{itemize}
 \end{frame}
@@ -1442,4 +1496,15 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \end{frame}
 
 
+\begin{frame}
+%% TODO: shorten things
+\frametitle{Overview}
+\centering
+\includegraphics[width = 0.50\textwidth]{./figs/gclds/fig_monkey.png}
+\begin{itemize}
+\item Neuroscience + Big data = \alert{Opportunities}!
+\end{itemize}
+%https://web.stanford.edu/group/murmann_group/cgi-bin/mediawiki/index.php/Ross_Walker
+
+\end{frame}
 
