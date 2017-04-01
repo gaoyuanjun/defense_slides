@@ -319,8 +319,8 @@
 %\[ \vx \sim \text{Poisson}(f(\vz))  , \vz \sim p(\vz) \rightarrow \text{var}(\vx) \geq E(\vx)\]
 \[\left. \begin{array}{ll} \vz &\sim p(\vz) \\ \vx &\sim \text{Poisson}(f(\vz)) \end{array} \right\} \Rightarrow 
 \begin{array}{ll} \text{var}(\vx | \vz) &= E(\vx | \vz) \\ \text{var}(\vx) &\geq E(\vx)  \end{array}\]
-\item Need a more flexible distribution to separate \alert{firing rate variability} with \alert{noise variability}.
-\[\text{var}(\vx) = \underbrace{\text{var}\left(E(\vx | \vz)\right)}_\text{firing rate variability} + \underbrace{E\left(\text{var}(\vx | \vz)\right)}_\text{noise variability}\]
+%\item Need a more flexible distribution to separate \alert{firing rate variability} with \alert{noise variability}.
+%\[\text{var}(\vx) = \underbrace{\text{var}\left(E(\vx | \vz)\right)}_\text{firing rate variability} + \underbrace{E\left(\text{var}(\vx | \vz)\right)}_\text{noise variability}\]
 \end{itemize}
 \end{frame}
 
@@ -361,7 +361,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
  \[\begin{split}
  \vz_{r1} &\sim \N(\mu_1, Q_1)\\
  \vz_{r(t+1)} | \vz_{rt} &\sim \N(A \vz_{rt}, Q)\\
- x_{rti} & \sim \mathcal{GC}(c_i^T \vz_{rt}, g_i(\cdot)), i = 1,...,n
+ x_{rti} | \vz_{rt} & \sim \mathcal{GC}(c_i^T \vz_{rt}, g_i(\cdot))%, i = 1,...,n
  \end{split}\]
  \item Practical considerations
  \begin{itemize}
@@ -383,8 +383,8 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \[p_{\theta}(\vz | \vx) \approx q(\vz) \in \mathcal{Q}\]
 \item Optimize a \alert{lower bound of log likelihood}, or ELBO %w.r.t. both the model parameters and the variational distribution.
 \[\begin{split}
-&\text{ELBO}(\theta, q) = \int \left[\log p_{\theta}(\vx, \vz) - \log q(\vz)\right] q(\vz) d\vz \\
-&= \log p_{\theta}(\vx) - \text{KL}(q(\vz) || p_\theta(\vz | \vx)) \leq \log p_{\theta}(\vx) % \log p_\theta(\vx) =& \log \int p_{\theta}(\vx, \vz) d \vz\\ 
+&\text{ELBO}(\theta, q) = \int \left[\log \frac{p_{\theta}(\vx, \vz)}{q(\vz)}\right] q(\vz) d\vz \leq \log p_{\theta}(\vx) \\
+%&= \log p_{\theta}(\vx) - \text{KL}(q(\vz) || p_\theta(\vz | \vx)) \leq \log p_{\theta}(\vx) % \log p_\theta(\vx) =& \log \int p_{\theta}(\vx, \vz) d \vz\\ 
 \end{split}\]
 %\[\begin{split}
 %\log p_\theta(\vx) =& \log \int p_{\theta}(\vx, \vz) d \vz\\
