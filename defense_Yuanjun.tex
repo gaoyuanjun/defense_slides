@@ -294,13 +294,13 @@
 \begin{itemize}
 \item Common assumptions for latent dynamics: Gaussian linear dynamical system (LDS)
  \[\begin{split}
- \vz_{1} &\sim \N(\mu_1, Q_1)\\
- \vz_{t+1} | \vz_{t} &\sim \N(A \vz_{t}, Q)
+ \vz_{r1} &\sim \N(\mu_1, Q_1)\\
+ \vz_{r(t+1)} | \vz_{rt} &\sim \N(A \vz_{rt}, Q)
   \end{split}\]
 \item Common observation models:
- \[\vx_t | \vz_t \sim \underbrace{\underbrace{\N(C \vz_t + d, \Sigma)}_{\text{model mismatch}}
+ \[\vx_{rt} | \vz_{rt} \sim \underbrace{\underbrace{\N(C \vz_{rt} + d, \Sigma)}_{\text{model mismatch}}
  \text{ or }
- \underbrace{\text{Poisson}\left(\exp(C \vz_t + d)\right)}_{\text{equal dispersion}}}_\text{stringent assumptions}\]
+ \underbrace{\text{Poisson}\left(\exp(C \vz_{rt} + d)\right)}_{\text{equal dispersion}}}_\text{stringent assumptions}\]
 \item Our extensions for observation model:
 \begin{itemize}
 \item Generalized count distribution (GCLDS) \parencite{Gao2015}
@@ -317,7 +317,7 @@
 \begin{itemize}
 \item Doubly stochastic Poisson model implies \alert{overdispersion}
 %\[ \vx \sim \text{Poisson}(f(\vz))  , \vz \sim p(\vz) \rightarrow \text{var}(\vx) \geq E(\vx)\]
-\[\left. \begin{array}{ll} \vz &\sim p(\vz) \\ \vx &\sim \text{Poisson}(f(\vz)) \end{array} \right\} \Rightarrow 
+\[\left. \begin{array}{ll} \vz &\sim p(\vz) \\ \vx | \vz &\sim \text{Poisson}(f(\vz)) \end{array} \right\} \Rightarrow 
 \begin{array}{ll} \text{var}(\vx | \vz) &= E(\vx | \vz) \\ \text{var}(\vx) &\geq E(\vx)  \end{array}\]
 %\item Need a more flexible distribution to separate \alert{firing rate variability} with \alert{noise variability}.
 %\[\text{var}(\vx) = \underbrace{\text{var}\left(E(\vx | \vz)\right)}_\text{firing rate variability} + \underbrace{E\left(\text{var}(\vx | \vz)\right)}_\text{noise variability}\]
@@ -336,8 +336,8 @@ p_{\mathcal{GC}}(x; \theta, g(\cdot)) \propto& \frac{\exp(\theta \cdot x + g(x) 
 \end{split}\]
 where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
 \item Parameterizes \alert{all} the count distributions \alert{redundantly}.
-\item Given $g(\cdot)$, $\theta$ controls the expectation.
-\item $g(\cdot)$ controls the ``shape'' of the distribution. Convex/concave/linear $g(\cdot)$ implies overdispersed/underdispered/Poisson distribution.
+\item $\theta$ acts as ``rate'' parameter.
+\item $g(\cdot)$ acts as ``shape'' parameter. %Convex/concave/linear $g(\cdot)$ implies overdispersed/underdispered/Poisson distribution.
 \end{itemize}
 \end{frame}
 
@@ -366,7 +366,7 @@ where $\theta \in \mathbb{R}$, $g(\cdot): \mathbb{N} \rightarrow \mathbb{R}$.
  \item Practical considerations
  \begin{itemize}
  %\item Set $g_i(0) = 0$ without loss of generality;
- \item Set $g_i(k) = -\infty$ for $k > K$ to facilitate computation;
+ \item Set $g_i(k) = -\infty$ for $k > K$ to facilitate computation.
  \item Ridge penalty on the $2^{\text{nd}}$ difference of $g_i(\cdot)$ to avoid overfitting; $\text{penalty} = \lambda \sum_{k=1}^{K-1} (g_i(k-1) - 2 g_i(k) + g_i(k+1))^2$.
  %\item Set $g_i(0) = 0$ without loss of generality.
  \end{itemize}
@@ -965,7 +965,7 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \item \alert{Entropy}: for a continuous distribution with density $p(\vz)$ where $\vz \in \mathbb{R}^d$, the entropy is defined as
 \[H(p) = - \int p(\vz) \log p(\vz)  d \vz = E_{\mZ \sim p} \left[ -\log p(\mZ) \right].\]
 \item A popular measure of diversity or information content.
-\item \alert{Maximum entropy (ME) principle}: Subject to some given prior knowledge, the distribution that makes \alert{minimal additional assumptions} is that which has the \alert{largest entropy} of any distribution obeying those constraints
+\item \alert{Maximum entropy (ME) principle}: Subject to some given prior knowledge (usually in the form of expectation or support constraints), the distribution that makes \alert{minimal additional assumptions} is that which has the \alert{largest entropy} of any distribution obeying those constraints
 \end{itemize}
 \end{frame}
 
@@ -1003,7 +1003,8 @@ where $T(\vz) = (T_1(\vz),...,T_m(\vz)):\mathcal{Z}\rightarrow \mathbb{R}^{m}$ i
 \[\label{curmet}
 p^*(\vz) \propto e^{<\eta, T(\vz)>} \mathbbm{1}(\vz \in \mathcal{Z})
 \]
-\item Hard to Identify $\eta \in \mathbb{R}^m$.
+For some $\eta \in  \mathbb{R}^m$ such that $E_{\mZ\sim p^*}[T(\mZ)]=0$.
+\item Hard to Identify $\eta$.
 \item Hard to sample from the distribution.
 \item \alert{Question}: is there a better way to do this?
 \end{itemize}
@@ -1034,7 +1035,7 @@ p^{*} &=& \underset{p}{\text{maximize}}~~~ H(p) \\
 \begin{frame}
 \frametitle{Normalizing flow}
 \begin{itemize}
-\item \alert{Normalizing flow}: A parameterized family of \alert{smooth and invertible} transformation. %\[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}.\]
+\item \alert{Normalizing flow}: A \alert{smooth and invertible} transformation. %\[\mathcal{F}=\{f_\phi:  \mathbb{R}^d \rightarrow \mathbb{R}^d, \phi \in \mathbb{R}^q\}.\]
 \item Explicit probability density form for $Z = f_\phi(Z_0) \sim p_\phi$ by \alert{change-of-variable theorem}
 \[p_\phi(\vz) = p_0\left( f_\phi^{-1}(\vz) \right) | \det \left(J_\phi (\vz)\right) |^{-1}.\]
 \item Constructing a flexible family of normalizing flows by composing simple normalizing flows (\alert{deep learning})
@@ -1338,7 +1339,7 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 \frametitle{Model formulation}
 \begin{itemize}
 \item  $X \in \mathbb{R}^{N \times T}$ represents the calcium imaging data, where each column is a (vectorized) frame that contains $N$ pixels
-\item Decompose $X$ into a product of $K$ \alert{spatial component} and \alert{temporal component}% (neural acitivities)
+\item Decompose $X$ into a product of $K$ \alert{spatial components} and \alert{temporal components}% (neural acitivities)
 \[X = D A^T + \text{noise}\]
 \begin{itemize}
 \item $D = [D_1,...,D_K] \in \mathbb{R}^{N \times K}$ represents the neuron shapes
