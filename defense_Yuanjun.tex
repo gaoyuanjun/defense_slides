@@ -19,6 +19,7 @@
 \usepackage{algorithmicx}
 \usepackage{rotating}
 \usepackage{hyperref}
+\usepackage{multimedia}
 \usepackage{tikz}
 \usepackage{bbm}
 \usepackage{smartdiagram}
@@ -776,6 +777,44 @@ Calcium trace (cartoon) \\
 \end{frame}
 
 
+
+\begin{frame}
+\frametitle{Introduction: calcium imaging data}
+\begin{itemize}
+\item Calcium imaging enables \alert{simultaneous} recording of \alert{many} neurons.
+\end{itemize}
+%{\scriptsize
+\begin{tabular}[t]{ccccc}
+Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
+\hspace{-1cm}\begin{minipage}{0.2\textwidth}
+\begin{tabular}[t]{ccc}
+\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_1.pdf}&
+\hspace{-0.3cm}\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_2.pdf}&
+\hspace{-0.3cm}\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_3.pdf}
+\end{tabular}
+\end{minipage}
+&&
+\begin{minipage}{0.2\textwidth}
+%\begin{tabular}[t]{c}
+\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_1.pdf}\\
+\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_2.pdf}\\
+\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_3.pdf}
+%\end{tabular}
+\end{minipage}
+&&
+\begin{minipage}{0.06\textwidth}
+\begin{center}
+\movie[width=1.3cm, height=2.6cm, borderwidth=0pt, autostart, loop]{}{video_cal_simulation_3neurons_autumn.avi}
+  \end{center}
+ \end{minipage}
+\end{tabular}
+\begin{itemize}
+\item \alert{Goal}: recover the neuron shape and calcium trace given the observation.
+\end{itemize}
+%}
+\end{frame}
+
+
 \begin{frame}
 \frametitle{Introduction: calcium imaging data}
 \begin{itemize}
@@ -916,7 +955,7 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \end{frame}
 
 \begin{frame}
-\frametitle{Real data analysis: sample patch, shape regularization}
+\frametitle{Real data analysis: sample patch, with shape regularization}
 {\small
 \begin{tabular}[t]{cc}
 \parbox{0.3\textwidth}{Mean image with fitted ROI locations}& Fitted ROI shape 
@@ -934,6 +973,13 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 }
 \end{frame}
 
+
+\begin{frame}
+\frametitle{Real data analysis: video}
+\begin{center}
+\movie[width=1\textwidth, height=0.75\textwidth, borderwidth=0pt, autostart, repeat]{}{video_misha_result.avi}
+\end{center}
+\end{frame}
 
 \begin{frame}
 \frametitle{Conclusion and discussion}
