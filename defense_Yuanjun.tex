@@ -5,6 +5,7 @@
 
 \usepackage{color}
 \usepackage{rotating}
+%\usepackage{movie15}
 \usepackage{graphicx}
 \usepackage[english]{babel}
 \usepackage[latin1]{inputenc}
@@ -19,10 +20,11 @@
 \usepackage{algorithmicx}
 \usepackage{rotating}
 \usepackage{hyperref}
-\usepackage{multimedia}
+%\usepackage{multimedia}
 \usepackage{tikz}
 \usepackage{bbm}
 \usepackage{smartdiagram}
+\usepackage{animate}
 \usesmartdiagramlibrary{additions}
 \usetikzlibrary{fit,positioning}
 \usepackage[backend=bibtex,style=authoryear]{biblatex}
@@ -88,6 +90,7 @@
 \end{center}
 %https://commons.wikimedia.org/wiki/File%3ABrain_human_sagittal_section.svg
 \end{frame}
+
 
 
 
@@ -778,41 +781,6 @@ Calcium trace (cartoon) \\
 
 
 
-\begin{frame}
-\frametitle{Introduction: calcium imaging data}
-\begin{itemize}
-\item Calcium imaging enables \alert{simultaneous} recording of \alert{many} neurons.
-\end{itemize}
-%{\scriptsize
-\begin{tabular}[t]{ccccc}
-Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
-\hspace{-1cm}\begin{minipage}{0.2\textwidth}
-\begin{tabular}[t]{ccc}
-\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_1.pdf}&
-\hspace{-0.3cm}\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_2.pdf}&
-\hspace{-0.3cm}\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_3.pdf}
-\end{tabular}
-\end{minipage}
-&&
-\begin{minipage}{0.2\textwidth}
-%\begin{tabular}[t]{c}
-\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_1.pdf}\\
-\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_2.pdf}\\
-\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_3.pdf}
-%\end{tabular}
-\end{minipage}
-&&
-\begin{minipage}{0.06\textwidth}
-\begin{center}
-\movie[width=1.3cm, height=2.6cm, borderwidth=0pt, autostart, loop]{}{video_cal_simulation_3neurons_autumn.avi}
-  \end{center}
- \end{minipage}
-\end{tabular}
-\begin{itemize}
-\item \alert{Goal}: recover the neuron shape and calcium trace given the observation.
-\end{itemize}
-%}
-\end{frame}
 
 
 \begin{frame}
@@ -974,12 +942,7 @@ Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Real data analysis: video}
-\begin{center}
-\movie[width=1\textwidth, height=0.75\textwidth, borderwidth=0pt, autostart, repeat]{}{video_misha_result.avi}
-\end{center}
-\end{frame}
+
 
 \begin{frame}
 \frametitle{Conclusion and discussion}
@@ -1556,4 +1519,51 @@ Approximates a complicated factor with a Gaussian factor dependent on the data i
 %https://web.stanford.edu/group/murmann_group/cgi-bin/mediawiki/index.php/Ross_Walker
 
 \end{frame}
+
+
+\begin{frame}
+\frametitle{Introduction: calcium imaging data}
+\begin{itemize}
+\item Calcium imaging enables \alert{simultaneous} recording of \alert{many} neurons.
+\end{itemize}
+%{\scriptsize
+\begin{tabular}[t]{ccccc}
+Neuron shape & $\times$ & Calcium trace  & $+$  Noise $=$ &Obseravtion\\
+\hspace{-1cm}\begin{minipage}{0.2\textwidth}
+\begin{tabular}[t]{ccc}
+\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_1.pdf}&
+\hspace{-0.3cm}\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_2.pdf}&
+\hspace{-0.3cm}\includegraphics[scale=0.2,clip = true]{figs/ROI_cartoon/fig_cartoon_neuron_3.pdf}
+\end{tabular}
+\end{minipage}
+&&
+\begin{minipage}{0.2\textwidth}
+%\begin{tabular}[t]{c}
+\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_1.pdf}\\
+\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_2.pdf}\\
+\includegraphics[scale=0.18,clip = true]{figs/ROI_cartoon/fig_cartoon_calcium_3.pdf}
+%\end{tabular}
+\end{minipage}
+&&
+\begin{minipage}{0.06\textwidth}
+\begin{center}
+\animategraphics[width=1.3cm, height=2.6cm, loop]{12}{figs/sim_vid/fig_cartoon_spike-}{1}{50}
+%\movie[width=1.3cm, height=2.6cm, borderwidth=0pt, autostart, loop]{}{video_cal_simulation_3neurons_autumn.avi}
+  \end{center}
+ \end{minipage}
+\end{tabular}
+\begin{itemize}
+\item \alert{Goal}: recover the neuron shape and calcium trace given the observation.
+\end{itemize}
+%}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Real data analysis: video}
+\begin{center}
+\movie[width=1\textwidth, height=0.75\textwidth, borderwidth=0pt, autostart, repeat]{}{video_misha_result.avi}
+\end{center}
+\end{frame}
+
 
